@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="organize!">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <title>Painel - organize!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app">
+
+  <header class="topo">
+    <div class="topo-inner">
+      <p class="marca">organize<span class="marca-ponto">!</span></p>
+
+      <nav class="menu" aria-label="Principal">
+        <a class="menu-item" href="index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          <span>Lançamentos</span>
+        </a>
+        <a class="menu-item" href="painel.html" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M8 16v-4M13 16V8M18 16v-6"/></svg>
+          <span>Painel</span>
+        </a>
+        <a class="menu-item" href="tipos.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><path d="M7 7h.01"/></svg>
+          <span>Tipos</span>
+        </a>
+        <a class="menu-item" href="cartoes.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+          <span>Cartões</span>
+        </a>
+      </nav>
+
+      <div class="topo-usuario">
+        <span class="topo-nome" id="usuario-nome"></span>
+        <button type="button" class="btn btn-secundario btn-sm" id="btn-instalar" hidden>Instalar app</button>
+        <button type="button" class="btn btn-secundario btn-sm" id="btn-sair">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="conteudo conteudo--lanc">
+    <div class="coluna coluna--larga">
+      <div class="mes">
+        <button type="button" class="mes-seta" id="mes-anterior" aria-label="Mês anterior">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <h1 class="mes-titulo" id="mes-titulo" aria-live="polite">&nbsp;</h1>
+        <button type="button" class="mes-seta" id="mes-seguinte" aria-label="Próximo mês">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+      <p class="mes-dica">Despesas pelo vencimento e receitas pela data em que entram.</p>
+
+      <p id="msg" class="msg" role="alert" hidden></p>
+
+      <section class="mes-resumo" id="mes-resumo" aria-label="Resumo do mês" hidden>
+        <dl class="mes-resumo-linhas">
+          <div class="mes-resumo-linha">
+            <dt>Receitas</dt>
+            <dd id="res-receitas">R$ 0,00</dd>
+          </div>
+          <div class="mes-resumo-linha">
+            <dt>Despesas</dt>
+            <dd id="res-despesas">R$ 0,00</dd>
+          </div>
+          <div class="mes-resumo-linha mes-resumo-linha--saldo">
+            <dt>Saldo previsto</dt>
+            <dd id="res-saldo">R$ 0,00</dd>
+          </div>
+        </dl>
+        <p class="mes-resumo-atual">Saldo atual, só com o que já foi recebido e pago: <strong id="res-saldo-atual">R$ 0,00</strong></p>
+
+        <div class="limite" id="limite" data-nivel="nenhum">
+          <div class="limite-topo">
+            <p class="limite-titulo">Limite de gastos</p>
+            <a class="btn-texto" id="btn-limite" href="index.html">Definir limite</a>
+          </div>
+          <p class="limite-valores" id="limite-valores" hidden></p>
+          <div class="limite-barra" id="limite-barra" hidden><span id="limite-barra-cheia"></span></div>
+          <p class="limite-msg" id="limite-msg" role="status">
+            <svg class="limite-icone" viewBox="0 0 24 24" aria-hidden="true">
+              <g class="ic-nenhum"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></g>
+              <g class="ic-ok"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/></g>
+              <g class="ic-perto"><path d="M12 3.5l9.5 16.5h-19z"/><path d="M12 10v4.5M12 17.5v.01"/></g>
+              <g class="ic-estourou"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></g>
+            </svg>
+            <span id="limite-texto">Defina um limite mensal para ser avisado quando os gastos chegarem perto dele.</span>
+          </p>
+        </div>
+      </section>
+
+      <section class="grafico-card" aria-labelledby="t-meses">
+        <h2 class="grafico-titulo" id="t-meses">Receitas e despesas por mês</h2>
+        <p class="grafico-sub" id="sub-meses">Últimos 6 meses</p>
+        <ul class="legenda" aria-label="Legenda">
+          <li><span class="legenda-marca legenda-marca--receita" aria-hidden="true"></span>Receitas</li>
+          <li><span class="legenda-marca legenda-marca--despesa" aria-hidden="true"></span>Despesas</li>
+        </ul>
+        <div class="grafico" id="grafico-meses">
+          <div class="grafico-dica" id="grafico-dica" role="status" hidden></div>
+        </div>
+        <details class="tabela-grafico">
+          <summary>Ver em tabela</summary>
+          <div class="tabela-rolagem">
+            <table>
+              <caption class="so-leitor">Receitas, despesas e saldo por mês</caption>
+              <thead><tr><th scope="col">Mês</th><th scope="col">Receitas</th><th scope="col">Despesas</th><th scope="col">Saldo</th></tr></thead>
+              <tbody id="tabela-meses"></tbody>
+            </table>
+          </div>
+        </details>
+      </section>
+
+      <section class="grafico-card" aria-labelledby="t-desp-tipo">
+        <h2 class="grafico-titulo" id="t-desp-tipo">Despesas por tipo</h2>
+        <p class="grafico-sub" id="sub-desp-tipo"></p>
+        <div id="tipos-despesas"></div>
+      </section>
+
+      <section class="grafico-card" aria-labelledby="t-rec-tipo">
+        <h2 class="grafico-titulo" id="t-rec-tipo">Receitas por tipo</h2>
+        <p class="grafico-sub" id="sub-rec-tipo"></p>
+        <div id="tipos-receitas"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pwa.js"></script>
+  <script src="js/painel.js"></script>
+</body>
+</html>

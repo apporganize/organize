@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d3b2a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="organize!">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <title>Entrar - organize!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth" data-publica>
+
+  <aside class="auth-painel">
+    <p class="marca">organize<span class="marca-ponto">!</span></p>
+
+    <ul class="lanc-lista" aria-hidden="true">
+      <li class="lanc-item">
+        <span class="lanc-desc">Mercado<small>Pix</small></span>
+        <span class="lanc-valor">R$ 187,40</span>
+        <span class="chip chip-pago">Pago</span>
+      </li>
+      <li class="lanc-item">
+        <span class="lanc-desc">Aluguel<small>Débito</small></span>
+        <span class="lanc-valor">R$ 1.450,00</span>
+        <span class="chip chip-pendente">Pendente</span>
+      </li>
+      <li class="lanc-item">
+        <span class="lanc-desc">Internet<small>Crédito, final 8821</small></span>
+        <span class="lanc-valor">R$ 119,90</span>
+        <span class="chip chip-pago">Pago</span>
+      </li>
+    </ul>
+
+    <p class="auth-texto">Registre cada despesa e acompanhe o que já foi pago e o que ainda está pendente.</p>
+  </aside>
+
+  <main class="auth-conteudo">
+    <div class="auth-form-area">
+      <h1 class="auth-titulo">Entrar</h1>
+      <p class="auth-sub">Use seu e-mail e sua senha para acessar suas despesas.</p>
+
+      <form id="form-login" novalidate>
+        <div class="campo">
+          <label for="email">E-mail</label>
+          <input class="entrada" id="email" type="email" inputmode="email" autocomplete="username"
+                 autocapitalize="none" spellcheck="false" maxlength="254" required autofocus>
+        </div>
+
+        <div class="campo">
+          <label for="senha">Senha</label>
+          <div class="entrada-senha">
+            <input class="entrada" id="senha" type="password" autocomplete="current-password" maxlength="72" required>
+            <button type="button" class="btn-mostrar" data-mostrar-senha="senha"
+                    aria-controls="senha" aria-pressed="false">Mostrar</button>
+          </div>
+        </div>
+
+        <p id="msg" class="msg" role="alert" hidden></p>
+
+        <button type="submit" class="btn btn-primario" id="btn-entrar">Entrar</button>
+      </form>
+
+      <p class="auth-rodape">Ainda não tem conta? <a class="link" href="cadastro.html">Criar conta</a></p>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/pwa.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="organize!">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <title>Cartões - organize!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app">
+
+  <header class="topo">
+    <div class="topo-inner">
+      <p class="marca">organize<span class="marca-ponto">!</span></p>
+
+      <nav class="menu" aria-label="Principal">
+        <a class="menu-item" href="index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          <span>Lançamentos</span>
+        </a>
+        <a class="menu-item" href="painel.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M8 16v-4M13 16V8M18 16v-6"/></svg>
+          <span>Painel</span>
+        </a>
+        <a class="menu-item" href="tipos.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><path d="M7 7h.01"/></svg>
+          <span>Tipos</span>
+        </a>
+        <a class="menu-item" href="cartoes.html" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+          <span>Cartões</span>
+        </a>
+      </nav>
+
+      <div class="topo-usuario">
+        <span class="topo-nome" id="usuario-nome"></span>
+        <button type="button" class="btn btn-secundario btn-sm" id="btn-instalar" hidden>Instalar app</button>
+        <button type="button" class="btn btn-secundario btn-sm" id="btn-sair">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="conteudo">
+    <div class="coluna">
+      <h1 class="conteudo-titulo">Cartões de crédito</h1>
+      <p class="conteudo-texto">Guardamos só o nome e os 4 últimos dígitos do cartão. Nunca digite o número completo.</p>
+
+      <form class="form-add form-add--cartao" id="form-cartao" novalidate>
+        <div class="campo">
+          <label for="nome">Nome do cartão</label>
+          <input class="entrada" id="nome" type="text" maxlength="40" autocomplete="off" required>
+        </div>
+        <div class="campo">
+          <label for="digitos">Final do cartão</label>
+          <input class="entrada" id="digitos" type="text" inputmode="numeric" pattern="[0-9]*"
+                 maxlength="4" autocomplete="off" placeholder="0000" required>
+        </div>
+        <button type="submit" class="btn btn-primario" id="btn-adicionar">Adicionar</button>
+      </form>
+
+      <p id="msg" class="msg" role="alert" hidden></p>
+
+      <ul class="lista" id="lista" hidden></ul>
+
+      <section class="vazio" id="vazio" hidden>
+        <h2 class="vazio-titulo">Nenhum cartão cadastrado</h2>
+        <p class="vazio-texto">Cadastre os cartões de crédito que você usa. Depois, escolha o cartão ao lançar uma despesa no crédito.</p>
+      </section>
+    </div>
+  </main>
+
+  <dialog class="dialogo" id="dlg-editar" aria-labelledby="dlg-editar-titulo">
+    <form id="form-editar" novalidate>
+      <h2 class="dialogo-titulo" id="dlg-editar-titulo">Editar cartão</h2>
+      <div class="campo">
+        <label for="editar-nome">Nome do cartão</label>
+        <input class="entrada" id="editar-nome" type="text" maxlength="40" autocomplete="off" required>
+      </div>
+      <div class="campo">
+        <label for="editar-digitos">Final do cartão</label>
+        <input class="entrada" id="editar-digitos" type="text" inputmode="numeric" pattern="[0-9]*"
+               maxlength="4" autocomplete="off" required>
+      </div>
+      <p id="msg-editar" class="msg" role="alert" hidden></p>
+      <div class="dialogo-acoes">
+        <button type="button" class="btn btn-secundario" data-fechar>Cancelar</button>
+        <button type="submit" class="btn btn-primario">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pwa.js"></script>
+  <script src="js/cartoes.js"></script>
+</body>
+</html>

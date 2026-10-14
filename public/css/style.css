@@ -1,0 +1,1496 @@
+/* organize! — estilos compartilhados (pensado primeiro para o celular) */
+
+:root {
+  --folha: #0d3b2a;          /* verde profundo: painel das telas de entrada */
+  --verde: #11804a;          /* ação principal */
+  --verde-escuro: #0d6a3d;   /* hover, links */
+  --menta: #8ce6b0;          /* destaque sobre o verde profundo */
+  --ambar: #f5cd6b;          /* status pendente */
+  --papel: #f3f7f4;          /* fundo das telas internas */
+  --superficie: #ffffff;
+  --tinta: #15251c;
+  --tinta-suave: #52645a;
+  --linha: #d5e0d9;
+  --erro: #b3261e;
+  --erro-fundo: #fdecea;
+  --erro-escuro: #8f1d17;
+  --ok: #0d6a3d;
+  --ok-fundo: #ddf3e6;
+  --raio: 10px;
+  --fonte: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--fonte);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--tinta);
+  background: var(--superficie);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, a { touch-action: manipulation; }
+
+/* ---------- Marca ---------- */
+
+.marca {
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.marca-ponto { color: var(--verde); }
+
+/* ---------- Botões ---------- */
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  min-height: 3rem;
+  padding: 0.7rem 1.25rem;
+  border: 1.5px solid transparent;
+  border-radius: var(--raio);
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.btn:focus-visible,
+.btn-texto:focus-visible {
+  outline: 3px solid rgba(17, 128, 74, 0.45);
+  outline-offset: 2px;
+}
+
+.btn[disabled] { opacity: 0.65; cursor: progress; }
+
+.btn-primario {
+  width: 100%;
+  background: var(--verde);
+  color: #fff;
+}
+
+.btn-primario:hover:not([disabled]) { background: var(--verde-escuro); }
+
+.btn-secundario {
+  background: transparent;
+  color: var(--tinta);
+  border-color: var(--linha);
+}
+
+.btn-secundario:hover:not([disabled]) { background: #e9f1ec; }
+
+.btn-perigo {
+  background: var(--erro);
+  color: #fff;
+}
+
+.btn-perigo:hover:not([disabled]) { background: var(--erro-escuro); }
+
+/* mínimo de 44 px de altura: dá para tocar sem errar o alvo */
+.btn-sm { min-height: 2.75rem; padding: 0.35rem 1rem; }
+
+/* Botão só de texto (Editar, Excluir) */
+.btn-texto {
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
+  font: inherit;
+  font-weight: 600;
+  color: var(--verde-escuro);
+  background: transparent;
+  border: 0;
+  border-radius: var(--raio);
+  cursor: pointer;
+}
+
+.btn-texto:hover { background: #e9f1ec; }
+
+.btn-texto-perigo { color: var(--erro); }
+
+.btn-texto-perigo:hover { background: var(--erro-fundo); }
+
+/* ---------- Formulários ---------- */
+
+.campo { margin-bottom: 1.1rem; }
+
+.campo label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+/* 16 px nos campos: abaixo disso o iPhone dá zoom ao tocar */
+.entrada {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.7rem 0.85rem;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--tinta);
+  background: var(--superficie);
+  border: 1.5px solid var(--linha);
+  border-radius: var(--raio);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.entrada:hover { border-color: #b7c9be; }
+
+.entrada:focus-visible {
+  outline: 2px solid transparent; /* aparece no modo de alto contraste */
+  border-color: var(--verde);
+  box-shadow: 0 0 0 4px rgba(17, 128, 74, 0.2);
+}
+
+.entrada-senha { position: relative; }
+
+.entrada-senha .entrada { padding-right: 5.25rem; }
+
+.btn-mostrar {
+  position: absolute;
+  top: 50%;
+  right: 0.3rem;
+  transform: translateY(-50%);
+  min-height: 2.75rem;
+  padding: 0 0.7rem;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--verde-escuro);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-mostrar:hover { background: #e9f1ec; }
+
+.btn-mostrar:focus-visible {
+  outline: 3px solid rgba(17, 128, 74, 0.45);
+  outline-offset: 1px;
+}
+
+.dica {
+  margin: 0.35rem 0 0;
+  font-size: 0.875rem;
+  color: var(--tinta-suave);
+}
+
+.msg {
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.9375rem;
+  border-radius: var(--raio);
+}
+
+.msg-erro { color: var(--erro); background: var(--erro-fundo); }
+.msg-ok   { color: var(--ok);   background: var(--ok-fundo); }
+
+.link {
+  color: var(--verde-escuro);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
+.link:focus-visible {
+  outline: 3px solid rgba(17, 128, 74, 0.45);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* ---------- Telas de entrada (login e cadastro) ---------- */
+
+.auth {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.auth-painel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2.5rem;
+  padding: clamp(1.75rem, 5vw, 4rem);
+  color: #eaf5ee;
+  background: var(--folha);
+}
+
+.auth-painel .marca { font-size: clamp(2.75rem, 6vw, 5rem); }
+
+.auth-painel .marca-ponto { color: var(--menta); }
+
+.auth-texto {
+  max-width: 24rem;
+  margin: 0;
+  font-size: 1.0625rem;
+  color: rgba(234, 245, 238, 0.85);
+}
+
+/* Prévia de despesas (decorativa) */
+
+.lanc-lista {
+  max-width: 26rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lanc-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 5.75rem;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  padding: 0.9rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.lanc-item:last-child { border-bottom: 1px solid rgba(255, 255, 255, 0.16); }
+
+.lanc-desc { font-size: 1.0625rem; font-weight: 600; }
+
+.lanc-desc small {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: rgba(234, 245, 238, 0.72);
+}
+
+.lanc-valor {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.chip {
+  justify-self: end;
+  padding: 0.15rem 0.65rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--folha);
+  border-radius: 999px;
+}
+
+.chip-pago     { background: var(--menta); }
+.chip-pendente { background: var(--ambar); }
+
+/* Único movimento da página: as linhas entram uma a uma */
+@media (prefers-reduced-motion: no-preference) {
+  .lanc-item {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: lanc-entra 0.5s ease forwards;
+  }
+  .lanc-item:nth-child(1) { animation-delay: 0.15s; }
+  .lanc-item:nth-child(2) { animation-delay: 0.3s; }
+  .lanc-item:nth-child(3) { animation-delay: 0.45s; }
+}
+
+@keyframes lanc-entra {
+  to { opacity: 1; transform: none; }
+}
+
+.auth-conteudo {
+  display: flex;
+  align-items: center;
+  padding: clamp(1.5rem, 5vw, 4rem);
+}
+
+.auth-form-area {
+  width: 100%;
+  max-width: 24rem;
+  margin-inline: auto;
+}
+
+.auth-titulo {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.auth-sub {
+  margin: 0 0 2rem;
+  color: var(--tinta-suave);
+}
+
+.auth-rodape {
+  margin: 1.5rem 0 0;
+  color: var(--tinta-suave);
+}
+
+@media (max-width: 54rem) {
+  .auth {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .auth-painel { padding: max(1.25rem, env(safe-area-inset-top)) 1.5rem 1.25rem; }
+  .auth-painel .marca { font-size: 2.25rem; }
+  .auth-painel .lanc-lista,
+  .auth-painel .auth-texto { display: none; }
+  .auth-conteudo {
+    align-items: flex-start;
+    padding-top: 2rem;
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* ---------- Telas internas: topo e menu ---------- */
+
+.app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--papel);
+}
+
+.topo {
+  background: var(--superficie);
+  border-bottom: 1px solid var(--linha);
+  padding-top: env(safe-area-inset-top);
+}
+
+.topo-inner {
+  display: flex;
+  flex-wrap: wrap; /* em telas muito estreitas, os botões descem para uma segunda linha em vez de estourar */
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+  max-width: 64rem;
+  min-height: 3.5rem;
+  margin: 0 auto;
+  padding: 0.5rem max(1rem, env(safe-area-inset-right)) 0.5rem max(1rem, env(safe-area-inset-left));
+}
+
+.topo .marca { font-size: 1.5rem; }
+
+.topo-usuario {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  margin-left: auto;
+}
+
+.topo-nome {
+  display: none;
+  max-width: 12rem;
+  overflow: hidden;
+  color: var(--tinta-suave);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* No celular o menu fica embaixo, ao alcance do polegar */
+.menu {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--superficie);
+  border-top: 1px solid var(--linha);
+}
+
+.menu-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  min-width: 0;
+  min-height: 4rem;
+  padding: 0.5rem 0.125rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--tinta-suave);
+  text-decoration: none;
+}
+
+.menu-item svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.menu-item[aria-current="page"] { color: var(--verde-escuro); }
+
+.menu-item[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 25%;
+  left: 25%;
+  height: 3px;
+  background: var(--verde);
+  border-radius: 0 0 3px 3px;
+}
+
+.menu-item:focus-visible {
+  outline: 3px solid rgba(17, 128, 74, 0.45);
+  outline-offset: -3px;
+}
+
+/* ---------- Telas internas: conteúdo ---------- */
+
+.conteudo {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 1.5rem max(1rem, env(safe-area-inset-right)) calc(5.5rem + env(safe-area-inset-bottom))
+           max(1rem, env(safe-area-inset-left));
+}
+
+.coluna { max-width: 36rem; }
+
+.conteudo-titulo {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.conteudo-texto {
+  max-width: 36rem;
+  margin: 0;
+  color: var(--tinta-suave);
+}
+
+/* Formulário de adicionar (tipos e cartões) */
+
+.form-add {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1.5rem 0 1.75rem;
+}
+
+.form-add .campo { margin: 0; }
+
+/* Caixa de marcar com explicação (ex.: "Conta com vencimento") */
+
+.opcao {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding: 0.25rem 0;
+  cursor: pointer;
+}
+
+.opcao input {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0.125rem 0 0;
+  accent-color: var(--verde);
+  cursor: pointer;
+}
+
+.opcao > span { min-width: 0; }
+.dialogo .opcao { margin-bottom: 1rem; }
+
+.opcao-titulo {
+  display: block;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.opcao-dica {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--tinta-suave);
+}
+
+.opcao input:focus-visible {
+  outline: 3px solid rgba(17, 128, 74, 0.45);
+  outline-offset: 2px;
+}
+
+/* Lista */
+
+.lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--linha);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: 3.75rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--linha);
+}
+
+.item-info { min-width: 0; }
+
+.item-nome {
+  display: block;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.item-detalhe {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--tinta-suave);
+}
+
+.item-acoes {
+  display: flex;
+  flex-shrink: 0;
+}
+
+/* Lista vazia: convida a agir */
+
+.vazio { padding: 0.5rem 0; }
+
+.vazio-titulo {
+  margin: 0 0 0.35rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.vazio-texto {
+  max-width: 28rem;
+  margin: 0 0 1.25rem;
+  color: var(--tinta-suave);
+}
+
+.vazio .btn { width: auto; }
+
+/* ---------- Janelas (no celular, sobem de baixo) ---------- */
+
+.dialogo {
+  width: min(100% - 2rem, 26rem);
+  padding: 1.5rem;
+  color: var(--tinta);
+  background: var(--superficie);
+  border: 0;
+  border-radius: 16px;
+  max-height: calc(100dvh - 1.5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.dialogo::backdrop { background: rgba(13, 59, 42, 0.5); }
+
+.dialogo-titulo {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.dialogo-texto {
+  margin: 0 0 1.25rem;
+  color: var(--tinta-suave);
+  overflow-wrap: anywhere;
+}
+
+.dialogo .campo { margin-bottom: 1rem; }
+
+.dialogo-acoes {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.dialogo-acoes .btn {
+  flex: 1;
+  width: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dialogo[open] { animation: dialogo-entra 0.2s ease-out; }
+}
+
+@keyframes dialogo-entra {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-width: 39.99rem) {
+  .dialogo {
+    width: 100%;
+    max-width: 100%;
+    margin: auto 0 0;
+    padding: 1.5rem 1rem calc(1.5rem + env(safe-area-inset-bottom));
+    border-radius: 16px 16px 0 0;
+  }
+}
+
+/* ---------- Telas maiores (tablet e computador) ---------- */
+
+@media (min-width: 40rem) {
+  .topo-nome { display: block; }
+
+  .dialogo-acoes { justify-content: flex-end; }
+  .dialogo-acoes .btn { flex: 0 0 auto; }
+
+  .form-add--tipo {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "campo botao" "opcao opcao";
+    align-items: end;
+  }
+  .form-add--tipo .campo { grid-area: campo; }
+  .form-add--tipo .opcao { grid-area: opcao; }
+  .form-add--tipo .btn-primario { grid-area: botao; }
+  .form-add--cartao { grid-template-columns: 1fr 10rem auto; align-items: end; }
+  .form-add .btn-primario { width: auto; }
+}
+
+@media (min-width: 48rem) {
+  /* o menu sobe para o topo */
+  .menu {
+    position: static;
+    display: flex;
+    gap: 0.25rem;
+    margin-right: auto;
+    margin-left: 1.25rem;
+    padding-bottom: 0;
+    background: transparent;
+    border-top: 0;
+  }
+
+  .menu-item {
+    flex-direction: row;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 0.9rem;
+    font-size: 0.9375rem;
+    border-radius: var(--raio);
+  }
+
+  .menu-item:hover { background: #e9f1ec; }
+
+  .menu-item svg { width: 1.25rem; height: 1.25rem; }
+
+  .menu-item[aria-current="page"] { background: var(--ok-fundo); }
+  .menu-item[aria-current="page"]::before { display: none; }
+
+  .menu-item:focus-visible { outline-offset: 0; }
+
+  .conteudo { padding-bottom: 3rem; }
+}
+
+/* ---------- Lançamentos ---------- */
+
+.coluna--larga { max-width: 40rem; }
+
+/* espaço no fim da lista para o botão "Nova despesa" não cobrir a última linha */
+.conteudo--lanc { padding-bottom: calc(10rem + env(safe-area-inset-bottom)); }
+
+/* Navegação por mês */
+.mes {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0 -0.5rem 0.75rem;
+}
+
+.mes-titulo {
+  flex: 1;
+  margin: 0;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.mes-seta {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: var(--tinta);
+  background: transparent;
+  border: 0;
+  border-radius: var(--raio);
+  cursor: pointer;
+}
+
+.mes-seta:hover { background: #e9f1ec; }
+
+.mes-seta:focus-visible {
+  outline: 3px solid rgba(17, 128, 74, 0.45);
+  outline-offset: 2px;
+}
+
+.mes-seta svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.btn-nova-desktop { display: none; width: auto; }
+
+/* Totais do mês */
+.resumo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  margin: 0 0 1.5rem;
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--linha);
+  border-bottom: 1px solid var(--linha);
+}
+
+.resumo-item { flex: 1 1 auto; }
+
+.resumo dt {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--tinta-suave);
+}
+
+.resumo dd {
+  margin: 0;
+  font-size: clamp(1.25rem, 5.5vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap; /* o número nunca quebra no meio */
+}
+
+.resumo-pago { color: var(--verde-escuro); }
+.resumo-pendente { color: #7a5600; }
+
+/* Dias e despesas */
+.dia { margin-bottom: 1.25rem; }
+
+.dia-titulo {
+  margin: 0 0 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--tinta-suave);
+}
+
+.desp {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 4.25rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--linha);
+}
+
+.desp-info { min-width: 0; }
+
+/* o botão se estica sobre a linha inteira: tocar em qualquer ponto abre a edição */
+.desp-editar {
+  display: block;
+  max-width: 100%;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  color: var(--tinta);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.desp-editar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.desp-editar:focus-visible { outline: none; }
+.desp-editar:focus-visible::after {
+  outline: 3px solid rgba(17, 128, 74, 0.45);
+  outline-offset: -3px;
+  border-radius: var(--raio);
+}
+
+.desp-detalhe {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--tinta-suave);
+  overflow-wrap: anywhere;
+}
+
+.desp-lado {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.desp-valor {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* área de toque de 44 px; o visual continua sendo a etiqueta pequena */
+.chip-botao {
+  position: relative;
+  z-index: 1;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  margin: -0.25rem -0.5rem -0.4rem 0;
+  padding: 0 0.5rem;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.chip-botao[disabled] { opacity: 0.6; cursor: progress; }
+
+.chip-botao:focus-visible {
+  outline: 3px solid rgba(17, 128, 74, 0.45);
+  outline-offset: -2px;
+  border-radius: 999px;
+}
+
+/* Botão flutuante (celular) */
+.fab {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: calc(4rem + env(safe-area-inset-bottom) + 0.75rem);
+  z-index: 9;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 3.5rem;
+  padding: 0 1.4rem 0 1.15rem;
+  font: inherit;
+  font-weight: 700;
+  color: #fff;
+  background: var(--verde);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(13, 59, 42, 0.28);
+  cursor: pointer;
+}
+
+.fab:hover { background: var(--verde-escuro); }
+
+.fab:focus-visible {
+  outline: 3px solid rgba(17, 128, 74, 0.45);
+  outline-offset: 3px;
+}
+
+.fab svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+/* Formulário da despesa */
+.campo-dupla {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.campo-dupla .campo { min-width: 0; }
+.campo-dupla--uma { grid-template-columns: 1fr; }
+
+select.entrada {
+  padding-right: 2.5rem;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2352645a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.25rem;
+}
+
+/* no iPhone o campo de data ignora a largura se não for contido */
+input.entrada[type="date"] {
+  display: block;
+  min-width: 0;
+  height: 3rem;
+  appearance: none;
+  -webkit-appearance: none;
+  text-align: left;
+}
+
+.grupo {
+  min-width: 0;
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 0;
+}
+
+.grupo legend {
+  margin-bottom: 0.35rem;
+  padding: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.segmentos {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 0.5rem;
+}
+
+.segmento { position: relative; display: block; }
+
+.segmento input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.segmento span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 0.25rem;
+  font-weight: 600;
+  color: var(--tinta);
+  background: var(--superficie);
+  border: 1.5px solid var(--linha);
+  border-radius: var(--raio);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.segmento input:checked + span {
+  color: var(--verde-escuro);
+  background: var(--ok-fundo);
+  border-color: var(--verde);
+}
+
+.segmento input:focus-visible + span {
+  outline: 3px solid rgba(17, 128, 74, 0.45);
+  outline-offset: 2px;
+}
+
+.dialogo-excluir { display: block; margin: 0.75rem auto 0; }
+
+@media (min-width: 48rem) {
+  .fab { display: none; }
+  .btn-nova-desktop { display: inline-block; }
+  .conteudo--lanc { padding-bottom: 3rem; }
+  .mes-titulo { flex: none; min-width: 15rem; }
+  .btn-nova-desktop { margin-left: auto; }
+  .mes { margin-right: 0; }
+}
+
+/* Telas bem estreitas: valor e data um embaixo do outro, para o campo de data não ser cortado */
+@media (max-width: 23rem) {
+  .campo-dupla { grid-template-columns: 1fr; gap: 0; }
+}
+
+/* Lançamentos: dica do mês, prévia da repetição e janela com rolagem só no miolo */
+
+.mes-dica {
+  margin: -0.25rem 0 0.9rem;
+  font-size: 0.8125rem;
+  color: var(--tinta-suave);
+  text-align: center;
+}
+
+.previa,
+.nota-serie {
+  margin: 0.75rem 0 0;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.4;
+  border-radius: var(--raio);
+  overflow-wrap: anywhere;
+}
+
+.previa { color: var(--verde-escuro); background: var(--ok-fundo); }
+
+.nota-serie {
+  margin: 0 0 1rem;
+  font-weight: 500;
+  color: var(--tinta-suave);
+  background: #e9f1ec;
+}
+
+.campo-rep { margin: 0.75rem 0 0; }
+
+/* A janela do formulário não rola inteira: título e botões ficam fixos, só o miolo rola */
+.dialogo--form[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dialogo--form form {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.dialogo-corpo {
+  flex: 1;
+  min-height: 0;
+  margin: 0 -1rem;
+  padding: 0.25rem 1rem 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.dialogo--form .dialogo-acoes { margin-top: 0.75rem; }
+
+.dialogo-acoes--coluna { flex-direction: column; }
+.dialogo-acoes--coluna .btn { flex: none; width: 100%; }
+
+@media (min-width: 40rem) {
+  .dialogo--form { width: min(100% - 2rem, 32rem); }
+}
+
+@media (min-width: 48rem) {
+  .mes-dica { text-align: left; padding-left: 0.5rem; }
+}
+
+/* ---------- Etapa 5: resumo do mês, limite, abas e receitas ---------- */
+
+.mes-resumo {
+  margin: 0 0 1rem;
+  padding: 0.75rem 0.9rem;
+  background: var(--superficie);
+  border: 1px solid var(--linha);
+  border-radius: 14px;
+}
+
+/* receitas e despesas lado a lado; o saldo ocupa a linha de baixo */
+.mes-resumo-linhas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem 0.75rem;
+  margin: 0;
+}
+
+.mes-resumo-linha {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mes-resumo-linha dt {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--tinta-suave);
+}
+
+.mes-resumo-linha dd {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.mes-resumo-linha--saldo {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--linha);
+}
+
+.mes-resumo-linha--saldo dt { font-size: 0.9375rem; color: var(--tinta); }
+
+.mes-resumo-linha--saldo dd {
+  margin-left: auto;
+  font-size: clamp(1.25rem, 5.5vw, 1.6rem);
+  letter-spacing: -0.02em;
+}
+
+.saldo-positivo { color: var(--verde-escuro); }
+.saldo-negativo { color: var(--erro); }
+
+.mes-resumo-atual {
+  margin: 0.2rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--tinta-suave);
+}
+
+.mes-resumo-atual strong { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Limite de gastos */
+
+.limite {
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--linha);
+  --lim-cor: var(--tinta-suave);
+  --lim-fill: var(--verde);
+  --lim-trilho: var(--ok-fundo);
+  --lim-fundo: transparent;
+  --lim-borda: transparent;
+}
+
+.limite[data-nivel="ok"]       { --lim-cor: var(--verde-escuro); --lim-fill: var(--verde); --lim-trilho: var(--ok-fundo); }
+.limite[data-nivel="perto"]    { --lim-cor: #7a5600; --lim-fill: #fab219; --lim-trilho: #fdf0cf; --lim-fundo: #fff8e6; --lim-borda: #f1d38a; }
+.limite[data-nivel="estourou"] { --lim-cor: var(--erro-escuro); --lim-fill: #d03b3b; --lim-trilho: #f9dcdc; --lim-fundo: var(--erro-fundo); --lim-borda: #f3b7b2; }
+
+.limite-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 0.75rem;
+}
+
+.limite-titulo {
+  margin: 0;
+  font-weight: 600;
+  color: var(--tinta-suave);
+}
+
+.limite-valores {
+  margin: 0.1rem 0 0.45rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.limite-barra {
+  height: 0.75rem;
+  overflow: hidden;
+  background: var(--lim-trilho);
+  border-radius: 999px;
+}
+
+.limite-barra > span {
+  display: block;
+  height: 100%;
+  background: var(--lim-fill);
+  border-radius: 999px;
+  transition: width 0.3s;
+}
+
+.limite-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin: 0.6rem 0 0;
+  padding: 0.55rem 0.7rem;
+  font-weight: 600;
+  color: var(--lim-cor);
+  background: var(--lim-fundo);
+  border: 1px solid var(--lim-borda);
+  border-radius: var(--raio);
+}
+
+/* sem limite definido, o botão "Definir limite" já explica; a frase só ocuparia espaço */
+.limite[data-nivel="nenhum"] .limite-msg { display: none; }
+
+.limite-msg > span { min-width: 0; overflow-wrap: anywhere; }
+
+.limite-icone {
+  flex-shrink: 0;
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-top: 0.05rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* um ícone de forma diferente para cada nível: o aviso nunca depende só da cor */
+.limite-icone g { display: none; }
+.limite[data-nivel="nenhum"] .ic-nenhum,
+.limite[data-nivel="ok"] .ic-ok,
+.limite[data-nivel="perto"] .ic-perto,
+.limite[data-nivel="estourou"] .ic-estourou { display: inline; }
+
+/* Abas Despesas | Receitas (e Tipos) */
+
+.abas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem;
+  margin: 0 0 0.75rem;
+  padding: 0.25rem;
+  background: #e4ece7;
+  border-radius: 12px;
+}
+
+.aba {
+  font: inherit;
+  font-weight: 600;
+  min-height: 2.5rem;
+  padding: 0.4rem 0.5rem;
+  color: var(--tinta-suave);
+  background: transparent;
+  border: 0;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.aba[aria-selected="true"] {
+  color: var(--tinta);
+  background: var(--superficie);
+  box-shadow: 0 1px 3px rgba(13, 59, 42, 0.18);
+}
+
+.aba:focus-visible {
+  outline: 3px solid rgba(17, 128, 74, 0.45);
+  outline-offset: 2px;
+}
+
+.desp-valor--receita { color: var(--verde-escuro); }
+
+@media (min-width: 48rem) {
+  .abas { max-width: 22rem; }
+}
+
+/* ---------- Painel (gráficos) ---------- */
+
+.so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.grafico-card {
+  --serie-receita: #2a78d6;
+  --serie-despesa: #eb6834;
+  --serie-resto: #98a39c;
+  --grade: #e1e9e4;
+  --base: #aebdb4;
+  margin: 0 0 1.25rem;
+  padding: 1rem;
+  background: var(--superficie);
+  border: 1px solid var(--linha);
+  border-radius: 14px;
+}
+
+.grafico-titulo {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.grafico-sub {
+  margin: 0.1rem 0 0.75rem;
+  font-size: 0.875rem;
+  color: var(--tinta-suave);
+}
+
+.grafico-vazio {
+  margin: 0.5rem 0 0.25rem;
+  color: var(--tinta-suave);
+}
+
+/* Legenda: o quadradinho tem a cor da série; o texto fica na cor do texto */
+.legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.1rem;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+}
+
+.legenda li { display: flex; align-items: center; gap: 0.45rem; }
+
+.legenda-marca {
+  flex-shrink: 0;
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 3px;
+  background: var(--serie-receita);
+}
+
+.legenda-marca--receita { background: var(--serie-receita); }
+.legenda-marca--despesa { background: var(--serie-despesa); }
+
+/* Gráfico de colunas */
+.grafico { position: relative; }
+
+.grafico svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.eixo-grade { stroke: var(--grade); stroke-width: 1; }
+.eixo-base  { stroke: var(--base); stroke-width: 1; }
+
+.eixo-texto {
+  font-family: var(--fonte);
+  font-size: 11px;
+  fill: var(--tinta-suave);
+}
+
+.eixo-texto--atual { font-weight: 700; fill: var(--tinta); }
+
+.col-receita { fill: var(--serie-receita); }
+.col-despesa { fill: var(--serie-despesa); }
+
+.faixa-fundo { fill: transparent; }
+.faixa-fundo.ativa { fill: rgba(21, 37, 28, 0.07); }
+
+.faixa-alvo { fill: transparent; cursor: pointer; }
+.faixa-alvo:focus { outline: none; }
+.faixa-alvo:focus-visible { stroke: rgba(17, 128, 74, 0.75); stroke-width: 2; }
+
+.grafico-dica {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  display: grid;
+  gap: 0.1rem;
+  min-width: 11rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  background: var(--superficie);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  box-shadow: 0 4px 14px rgba(13, 59, 42, 0.18);
+  pointer-events: none;
+}
+
+.dica-linha { display: flex; align-items: center; gap: 0.4rem; }
+.dica-linha b { margin-left: auto; padding-left: 0.75rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Tabela alternativa ao gráfico */
+.tabela-grafico { margin-top: 0.75rem; overflow-x: auto; } /* se faltar espaço, a tabela rola em vez de cortar */
+
+.tabela-grafico summary {
+  min-height: 2.75rem;
+  padding: 0.65rem 0;
+  font-weight: 600;
+  color: var(--verde-escuro);
+  cursor: pointer;
+}
+
+.tabela-grafico summary:focus-visible {
+  outline: 3px solid rgba(17, 128, 74, 0.45);
+  outline-offset: 2px;
+}
+
+.tabela-rolagem { overflow-x: auto; }
+
+.tabela-grafico table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tabela-grafico th,
+.tabela-grafico td {
+  padding: 0.45rem 0.35rem;
+  text-align: right;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--linha);
+}
+
+.tabela-grafico th:first-child,
+.tabela-grafico td:first-child { text-align: left; padding-left: 0; }
+
+.tabela-grafico thead th { font-weight: 600; color: var(--tinta-suave); }
+.tabela-grafico tbody th { font-weight: 600; }
+
+/* Barras por tipo */
+.tipos-barras {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tipo-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 0.75rem;
+}
+
+.tipo-nome { font-weight: 600; overflow-wrap: anywhere; }
+
+.tipo-valor {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tipo-trilho { margin-top: 0.3rem; }
+
+.tipo-barra {
+  display: block;
+  height: 0.75rem;
+  border-radius: 0 4px 4px 0; /* quadrada na base, 4px arredondados na ponta */
+  background: var(--serie-receita);
+}
+
+.tipo-barra--receita { background: var(--serie-receita); }
+.tipo-barra--despesa { background: var(--serie-despesa); }
+.tipo-barra--resto   { background: var(--serie-resto); }
+
+/* menu de baixo com 4 itens: em telas muito estreitas o texto encolhe um pouco para caber */
+@media (max-width: 23rem) {
+  .menu-item { font-size: 0.6875rem; letter-spacing: -0.015em; }
+}
+
+/* telas de menos de 17.5rem (ex.: dobráveis fechados): mais um passo para o texto caber */
+@media (max-width: 17.5rem) {
+  .menu-item { font-size: 0.625rem; letter-spacing: -0.03em; }
+}
+
+@media (max-width: 15rem) {
+  .menu-item { font-size: 0.5625rem; }
+}
+
+.carregando {
+  margin: 0.5rem 0 1rem;
+  text-align: center;
+  color: var(--tinta-suave);
+}

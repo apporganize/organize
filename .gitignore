@@ -1,0 +1,12 @@
+# Segredos: NUNCA versionar
+.env
+
+# Sistema / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs e temporários
+*.log
+*.tmp

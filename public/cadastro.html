@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d3b2a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="organize!">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <title>Criar conta - organize!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth" data-publica>
+
+  <aside class="auth-painel">
+    <p class="marca">organize<span class="marca-ponto">!</span></p>
+
+    <ul class="lanc-lista" aria-hidden="true">
+      <li class="lanc-item">
+        <span class="lanc-desc">Mercado<small>Pix</small></span>
+        <span class="lanc-valor">R$ 187,40</span>
+        <span class="chip chip-pago">Pago</span>
+      </li>
+      <li class="lanc-item">
+        <span class="lanc-desc">Aluguel<small>Débito</small></span>
+        <span class="lanc-valor">R$ 1.450,00</span>
+        <span class="chip chip-pendente">Pendente</span>
+      </li>
+      <li class="lanc-item">
+        <span class="lanc-desc">Internet<small>Crédito, final 8821</small></span>
+        <span class="lanc-valor">R$ 119,90</span>
+        <span class="chip chip-pago">Pago</span>
+      </li>
+    </ul>
+
+    <p class="auth-texto">Registre cada despesa e acompanhe o que já foi pago e o que ainda está pendente.</p>
+  </aside>
+
+  <main class="auth-conteudo">
+    <div class="auth-form-area">
+      <h1 class="auth-titulo">Criar conta</h1>
+      <p class="auth-sub">Preencha os dados abaixo para começar a organizar suas despesas.</p>
+
+      <form id="form-cadastro" novalidate>
+        <div class="campo">
+          <label for="nome">Nome</label>
+          <input class="entrada" id="nome" type="text" autocomplete="name" maxlength="80" required autofocus>
+        </div>
+
+        <div class="campo">
+          <label for="email">E-mail</label>
+          <input class="entrada" id="email" type="email" inputmode="email" autocomplete="email"
+                 autocapitalize="none" spellcheck="false" maxlength="254" required>
+        </div>
+
+        <div class="campo">
+          <label for="senha">Senha</label>
+          <div class="entrada-senha">
+            <input class="entrada" id="senha" type="password" autocomplete="new-password"
+                   maxlength="72" required aria-describedby="dica-senha">
+            <button type="button" class="btn-mostrar" data-mostrar-senha="senha confirmar"
+                    aria-controls="senha confirmar" aria-pressed="false">Mostrar</button>
+          </div>
+          <p class="dica" id="dica-senha">Mínimo de 8 caracteres.</p>
+        </div>
+
+        <div class="campo">
+          <label for="confirmar">Confirmar senha</label>
+          <input class="entrada" id="confirmar" type="password" autocomplete="new-password" maxlength="72" required>
+        </div>
+
+        <p id="msg" class="msg" role="alert" hidden></p>
+
+        <button type="submit" class="btn btn-primario" id="btn-cadastrar">Criar conta</button>
+      </form>
+
+      <p class="auth-rodape">Já tem conta? <a class="link" href="login.html">Entrar</a></p>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/pwa.js"></script>
+  <script src="js/cadastro.js"></script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="organize!">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <title>Lançamentos - organize!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app">
+
+  <header class="topo">
+    <div class="topo-inner">
+      <p class="marca">organize<span class="marca-ponto">!</span></p>
+
+      <nav class="menu" aria-label="Principal">
+        <a class="menu-item" href="index.html" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          <span>Lançamentos</span>
+        </a>
+        <a class="menu-item" href="painel.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M8 16v-4M13 16V8M18 16v-6"/></svg>
+          <span>Painel</span>
+        </a>
+        <a class="menu-item" href="tipos.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><path d="M7 7h.01"/></svg>
+          <span>Tipos</span>
+        </a>
+        <a class="menu-item" href="cartoes.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+          <span>Cartões</span>
+        </a>
+      </nav>
+
+      <div class="topo-usuario">
+        <span class="topo-nome" id="usuario-nome"></span>
+        <button type="button" class="btn btn-secundario btn-sm" id="btn-instalar" hidden>Instalar app</button>
+        <button type="button" class="btn btn-secundario btn-sm" id="btn-sair">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="conteudo conteudo--lanc">
+    <div class="coluna coluna--larga">
+      <div class="mes">
+        <button type="button" class="mes-seta" id="mes-anterior" aria-label="Mês anterior">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+        <h1 class="mes-titulo" id="mes-titulo" aria-live="polite">&nbsp;</h1>
+        <button type="button" class="mes-seta" id="mes-seguinte" aria-label="Próximo mês">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+        <button type="button" class="btn btn-primario btn-sm btn-nova-desktop" data-nova-despesa>+ Nova despesa</button>
+        <button type="button" class="btn btn-primario btn-sm btn-nova-desktop" data-nova-receita hidden>+ Nova receita</button>
+      </div>
+      <p class="mes-dica">Despesas pelo vencimento e receitas pela data em que entram.</p>
+
+      <div class="abas" role="tablist" aria-label="Despesas ou receitas">
+        <button type="button" class="aba" role="tab" id="aba-despesas" aria-controls="painel-despesas" aria-selected="true">Despesas</button>
+        <button type="button" class="aba" role="tab" id="aba-receitas" aria-controls="painel-receitas" aria-selected="false" tabindex="-1">Receitas</button>
+      </div>
+
+      <p class="carregando" id="carregando" role="status">Carregando…</p>
+
+      <p id="msg-resumo" class="msg" role="alert" hidden></p>
+
+      <section class="mes-resumo" id="mes-resumo" aria-label="Resumo do mês" hidden>
+        <dl class="mes-resumo-linhas">
+          <div class="mes-resumo-linha">
+            <dt>Receitas</dt>
+            <dd id="res-receitas">R$ 0,00</dd>
+          </div>
+          <div class="mes-resumo-linha">
+            <dt>Despesas</dt>
+            <dd id="res-despesas">R$ 0,00</dd>
+          </div>
+          <div class="mes-resumo-linha mes-resumo-linha--saldo">
+            <dt>Saldo previsto</dt>
+            <dd id="res-saldo">R$ 0,00</dd>
+          </div>
+        </dl>
+        <p class="mes-resumo-atual">Saldo atual, só com o que já foi recebido e pago: <strong id="res-saldo-atual">R$ 0,00</strong></p>
+
+        <div class="limite" id="limite" data-nivel="nenhum">
+          <div class="limite-topo">
+            <p class="limite-titulo">Limite de gastos</p>
+            <button type="button" class="btn-texto" id="btn-limite">Definir limite</button>
+          </div>
+          <p class="limite-valores" id="limite-valores" hidden></p>
+          <div class="limite-barra" id="limite-barra" hidden><span id="limite-barra-cheia"></span></div>
+          <p class="limite-msg" id="limite-msg" role="status">
+            <svg class="limite-icone" viewBox="0 0 24 24" aria-hidden="true">
+              <g class="ic-nenhum"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></g>
+              <g class="ic-ok"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/></g>
+              <g class="ic-perto"><path d="M12 3.5l9.5 16.5h-19z"/><path d="M12 10v4.5M12 17.5v.01"/></g>
+              <g class="ic-estourou"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></g>
+            </svg>
+            <span id="limite-texto">Defina um limite mensal para ser avisado quando os gastos chegarem perto dele.</span>
+          </p>
+        </div>
+      </section>
+
+      <div id="painel-despesas" role="tabpanel" aria-labelledby="aba-despesas">
+        <dl class="resumo" id="resumo" hidden>
+          <div class="resumo-item">
+            <dt>Pago</dt>
+            <dd id="total-pago" class="resumo-pago">R$ 0,00</dd>
+          </div>
+          <div class="resumo-item">
+            <dt>Pendente</dt>
+            <dd id="total-pendente" class="resumo-pendente">R$ 0,00</dd>
+          </div>
+        </dl>
+
+        <p id="msg" class="msg" role="alert" hidden></p>
+
+        <div id="lista-dias"></div>
+
+        <section class="vazio" id="vazio" hidden>
+          <h2 class="vazio-titulo" id="vazio-titulo">Nenhuma despesa neste mês</h2>
+          <p class="vazio-texto">Toque em "Nova despesa" para registrar o primeiro gasto.</p>
+        </section>
+      </div>
+
+      <div id="painel-receitas" role="tabpanel" aria-labelledby="aba-receitas" hidden>
+        <dl class="resumo" id="resumo-receitas" hidden>
+          <div class="resumo-item">
+            <dt>Recebido</dt>
+            <dd id="total-recebido" class="resumo-pago">R$ 0,00</dd>
+          </div>
+          <div class="resumo-item">
+            <dt>A receber</dt>
+            <dd id="total-a-receber" class="resumo-pendente">R$ 0,00</dd>
+          </div>
+        </dl>
+
+        <p id="msg-receitas" class="msg" role="alert" hidden></p>
+
+        <div id="lista-receitas"></div>
+
+        <section class="vazio" id="vazio-receitas" hidden>
+          <h2 class="vazio-titulo" id="vazio-receitas-titulo">Nenhuma receita neste mês</h2>
+          <p class="vazio-texto">Toque em "Nova receita" para registrar o salário ou outro dinheiro que entra.</p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <button type="button" class="fab" data-nova-despesa>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    Nova despesa
+  </button>
+  <button type="button" class="fab" data-nova-receita hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    Nova receita
+  </button>
+
+  <dialog class="dialogo dialogo--form" id="dlg-despesa" aria-labelledby="dlg-despesa-titulo">
+    <form id="form-despesa" novalidate>
+      <h2 class="dialogo-titulo" id="dlg-despesa-titulo">Nova despesa</h2>
+
+      <div class="dialogo-corpo">
+
+      <div class="campo">
+        <label for="d-descricao">Descrição</label>
+        <input class="entrada" id="d-descricao" type="text" maxlength="100" autocomplete="off" required>
+      </div>
+
+      <div class="campo">
+        <label for="d-valor" id="rotulo-valor">Valor (R$)</label>
+        <input class="entrada" id="d-valor" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" required>
+      </div>
+
+      <div class="campo">
+        <label for="d-tipo">Tipo de despesa</label>
+        <select class="entrada" id="d-tipo" required></select>
+      </div>
+
+      <div class="campo-dupla" id="campos-datas">
+        <div class="campo" id="grupo-compra">
+          <label for="d-data">Data da compra</label>
+          <input class="entrada" id="d-data" type="date" min="2000-01-01" max="2100-12-31" required>
+        </div>
+        <div class="campo">
+          <label for="d-venc">Vencimento</label>
+          <input class="entrada" id="d-venc" type="date" min="2000-01-01" max="2100-12-31" required>
+        </div>
+      </div>
+
+      <fieldset class="grupo">
+        <legend>Forma de pagamento</legend>
+        <div class="segmentos">
+          <label class="segmento"><input type="radio" name="forma" value="credito"><span>Crédito</span></label>
+          <label class="segmento"><input type="radio" name="forma" value="debito"><span>Débito</span></label>
+          <label class="segmento"><input type="radio" name="forma" value="pix" checked><span>Pix</span></label>
+        </div>
+      </fieldset>
+
+      <div class="campo" id="grupo-cartao" hidden>
+        <label for="d-cartao">Cartão</label>
+        <select class="entrada" id="d-cartao"></select>
+        <p class="dica" id="sem-cartao" hidden>Você ainda não tem cartão cadastrado. <a class="link" href="cartoes.html">Cadastrar cartão</a></p>
+      </div>
+
+      <fieldset class="grupo" id="grupo-repeticao">
+        <legend>Repetição</legend>
+        <div class="segmentos">
+          <label class="segmento"><input type="radio" name="rep" value="unica" checked><span>Única</span></label>
+          <label class="segmento" id="opcao-parcelada" hidden><input type="radio" name="rep" value="parcelada"><span>Parcelada</span></label>
+          <label class="segmento"><input type="radio" name="rep" value="mensal"><span>Todo mês</span></label>
+        </div>
+
+        <div class="campo campo-rep" id="grupo-parcelas" hidden>
+          <label for="d-parcelas">Número de parcelas</label>
+          <select class="entrada" id="d-parcelas"></select>
+        </div>
+
+        <div class="campo campo-rep" id="grupo-meses" hidden>
+          <label for="d-meses">Repetir por quantos meses</label>
+          <input class="entrada" id="d-meses" type="text" inputmode="numeric" maxlength="2" autocomplete="off" value="12">
+        </div>
+
+        <p class="previa" id="previa" hidden></p>
+      </fieldset>
+
+      <p class="nota-serie" id="nota-serie" hidden></p>
+
+      <fieldset class="grupo">
+        <legend>Status</legend>
+        <div class="segmentos">
+          <label class="segmento"><input type="radio" name="status" value="pendente" checked><span>Pendente</span></label>
+          <label class="segmento"><input type="radio" name="status" value="pago"><span>Pago</span></label>
+        </div>
+        <p class="dica" id="dica-status" hidden>O status vale para o primeiro lançamento; os demais ficam pendentes.</p>
+      </fieldset>
+
+      </div>
+
+      <p id="msg-despesa" class="msg" role="alert" hidden></p>
+
+      <div class="dialogo-acoes">
+        <button type="button" class="btn btn-secundario" data-fechar>Cancelar</button>
+        <button type="submit" class="btn btn-primario" id="btn-salvar-despesa">Salvar</button>
+      </div>
+      <button type="button" class="btn-texto btn-texto-perigo dialogo-excluir" id="btn-excluir-despesa" hidden>Excluir despesa</button>
+    </form>
+  </dialog>
+
+  <dialog class="dialogo dialogo--form" id="dlg-receita" aria-labelledby="dlg-receita-titulo">
+    <form id="form-receita" novalidate>
+      <h2 class="dialogo-titulo" id="dlg-receita-titulo">Nova receita</h2>
+
+      <div class="dialogo-corpo">
+        <div class="campo">
+          <label for="r-descricao">Descrição</label>
+          <input class="entrada" id="r-descricao" type="text" maxlength="100" autocomplete="off" required>
+        </div>
+
+        <div class="campo">
+          <label for="r-valor" id="rotulo-valor-receita">Valor (R$)</label>
+          <input class="entrada" id="r-valor" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" required>
+        </div>
+
+        <div class="campo">
+          <label for="r-tipo">Tipo de receita</label>
+          <select class="entrada" id="r-tipo" required></select>
+        </div>
+
+        <div class="campo">
+          <label for="r-data">Data de recebimento</label>
+          <input class="entrada" id="r-data" type="date" min="2000-01-01" max="2100-12-31" required>
+        </div>
+
+        <fieldset class="grupo" id="grupo-repeticao-receita">
+          <legend>Repetição</legend>
+          <div class="segmentos">
+            <label class="segmento"><input type="radio" name="rrep" value="unica" checked><span>Única</span></label>
+            <label class="segmento"><input type="radio" name="rrep" value="mensal"><span>Todo mês</span></label>
+          </div>
+
+          <div class="campo campo-rep" id="grupo-meses-receita" hidden>
+            <label for="r-meses">Repetir por quantos meses</label>
+            <input class="entrada" id="r-meses" type="text" inputmode="numeric" maxlength="2" autocomplete="off" value="12">
+          </div>
+
+          <p class="previa" id="previa-receita" hidden></p>
+        </fieldset>
+
+        <p class="nota-serie" id="nota-serie-receita" hidden></p>
+
+        <fieldset class="grupo">
+          <legend>Status</legend>
+          <div class="segmentos">
+            <label class="segmento"><input type="radio" name="rstatus" value="a_receber" checked><span>A receber</span></label>
+            <label class="segmento"><input type="radio" name="rstatus" value="recebida"><span>Recebida</span></label>
+          </div>
+          <p class="dica" id="dica-status-receita" hidden>O status vale para o primeiro lançamento; os demais ficam a receber.</p>
+        </fieldset>
+      </div>
+
+      <p id="msg-receita" class="msg" role="alert" hidden></p>
+
+      <div class="dialogo-acoes">
+        <button type="button" class="btn btn-secundario" data-fechar>Cancelar</button>
+        <button type="submit" class="btn btn-primario" id="btn-salvar-receita">Salvar</button>
+      </div>
+      <button type="button" class="btn-texto btn-texto-perigo dialogo-excluir" id="btn-excluir-receita" hidden>Excluir receita</button>
+    </form>
+  </dialog>
+
+  <dialog class="dialogo" id="dlg-limite" aria-labelledby="dlg-limite-titulo">
+    <form id="form-limite" novalidate>
+      <h2 class="dialogo-titulo" id="dlg-limite-titulo">Limite de gastos</h2>
+      <p class="dialogo-texto">Quanto você quer gastar, no máximo, por mês? O app avisa quando as despesas do mês chegarem perto desse valor ou passarem dele.</p>
+      <div class="campo">
+        <label for="l-valor">Limite mensal (R$)</label>
+        <input class="entrada" id="l-valor" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" required>
+      </div>
+      <p id="msg-limite" class="msg" role="alert" hidden></p>
+      <div class="dialogo-acoes">
+        <button type="button" class="btn btn-secundario" data-fechar>Cancelar</button>
+        <button type="submit" class="btn btn-primario" id="btn-salvar-limite">Salvar</button>
+      </div>
+      <button type="button" class="btn-texto btn-texto-perigo dialogo-excluir" id="btn-remover-limite" hidden>Remover limite</button>
+    </form>
+  </dialog>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pwa.js"></script>
+  <script src="js/index.js"></script>
+  <script src="js/receitas.js"></script>
+  <script src="js/resumo.js"></script>
+</body>
+</html>
