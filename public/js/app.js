@@ -264,7 +264,14 @@ const Resumo = {
     Resumo.colorirSaldo($('res-saldo'), r.saldo.previsto);
     Resumo.colorirSaldo($('res-saldo-atual'), r.saldo.atual);
     Resumo.desenharLimite(r.limite, r.limite_config);
+    Resumo.esconderEsqueleto();
     $('mes-resumo').hidden = false;
+  },
+
+  // O esqueleto (barras cinza) ocupa o lugar do card enquanto o resumo ainda não chegou.
+  esconderEsqueleto() {
+    const e = document.getElementById('mes-resumo-esqueleto');
+    if (e) e.hidden = true;
   },
 };
 
