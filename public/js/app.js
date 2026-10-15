@@ -400,19 +400,33 @@ const App = {
  * igual ao que sobrou; o miolo do formulário rola por dentro e os botões continuam à vista.
  */
 const Teclado = {
+  observados: new WeakSet(),
+
+  limpar(d) {
+    ['top', 'bottom', 'margin-top', 'margin-bottom', 'max-height'].forEach((p) => d.style.removeProperty(p));
+  },
+
+  // Encaixa a janela na base da área visível (acima do teclado) e limita a altura ao que sobrou.
+  // Usa só o visualViewport (altura e deslocamento), sem depender de innerHeight, que no iOS não muda com o teclado.
   ajustar() {
     const vv = window.visualViewport;
     const celular = window.matchMedia('(max-width: 39.99rem)').matches;
     document.querySelectorAll('dialog[open]').forEach((d) => {
-      const coberto = vv ? window.innerHeight - vv.height - vv.offsetTop : 0;
-      if (!vv || !celular || coberto < 80) {
-        // sem teclado (ou tela grande): volta ao que o CSS manda
-        d.style.removeProperty('margin-bottom');
-        d.style.removeProperty('max-height');
+      if (!vv || !celular) {
+        Teclado.limpar(d);
         return;
       }
-      d.style.marginBottom = Math.round(coberto) + 'px';
+      if (!Teclado.observados.has(d)) {
+        // se o formulário muda de altura (ex.: aparecem campos de parcelas), encaixa de novo
+        Teclado.observados.add(d);
+        if (window.ResizeObserver) new ResizeObserver(() => Teclado.ajustar()).observe(d);
+      }
       d.style.maxHeight = Math.max(160, Math.round(vv.height - 12)) + 'px';
+      d.style.marginTop = '0';
+      d.style.marginBottom = '0';
+      d.style.bottom = 'auto';
+      const altura = d.getBoundingClientRect().height;
+      d.style.top = Math.max(0, Math.round(vv.offsetTop + vv.height - altura)) + 'px';
     });
   },
 
@@ -422,12 +436,16 @@ const Teclado = {
       window.visualViewport.addEventListener('scroll', Teclado.ajustar);
     }
     window.addEventListener('resize', Teclado.ajustar);
-    document.addEventListener('focusin', () => setTimeout(Teclado.ajustar, 50));
+    window.addEventListener('orientationchange', () => setTimeout(Teclado.ajustar, 300));
+    document.addEventListener('focusin', () => {
+      setTimeout(Teclado.ajustar, 50);
+      setTimeout(Teclado.ajustar, 350); // o teclado do iPhone leva um instante para terminar de subir
+    });
     // um campo tocado fica à vista depois que o teclado terminou de subir
     document.addEventListener('focusin', (e) => {
       if (!e.target.closest || !e.target.closest('dialog[open]')) return;
       if (!/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
-      setTimeout(() => e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300);
+      setTimeout(() => e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }), 400);
     });
   },
 };
