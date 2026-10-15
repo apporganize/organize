@@ -1701,3 +1701,27 @@ a.avatar[aria-current="page"] { box-shadow: 0 0 0 2px var(--verde); }
   outline: 3px solid rgba(17, 128, 74, 0.45);
   outline-offset: 2px;
 }
+
+/* ---------- Esqueleto de carregamento do resumo do mês ---------- */
+
+.esqueleto { display: grid; gap: 0.75rem; }
+.esq-linhas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem 0.75rem; }
+.esq-barra {
+  display: block;
+  height: 1.1rem;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--linha) 25%, rgba(127, 127, 127, 0.18) 50%, var(--linha) 75%);
+  background-size: 200% 100%;
+  animation: esq-brilho 1.2s ease-in-out infinite;
+}
+.esq-barra--larga { grid-column: 1 / -1; height: 1.5rem; }
+.esq-barra--meia { width: 70%; height: 0.9rem; }
+.esq-barra--limite { height: 2.6rem; border-radius: 10px; }
+@keyframes esq-brilho {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .esq-barra { animation: none; }
+}
+.esqueleto[hidden] { display: none; }
