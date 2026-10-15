@@ -416,11 +416,33 @@ const Backend = (function () {
     return todas;
   }
 
-  /** Limite mensal em centavos, ou null se não definiu. */
-  async function limiteEmCentavos() {
-    const linhas = await db('GET', 'configuracoes', { query: { select: 'limite_mensal' } });
-    const valor = linhas[0] ? linhas[0].limite_mensal : null;
-    return valor === null || valor === undefined ? null : emCentavos(valor);
+  /**
+   * Configuração do limite: { valor: centavos|null, percentual: 1..100|null }. Só um dos dois vem preenchido.
+   * Banco ainda sem a etapa 7 (sem a coluna limite_percentual): lê só o valor em reais, e o app segue funcionando.
+   */
+  async function lerConfiguracao() {
+    let linhas;
+    try {
+      linhas = await db('GET', 'configuracoes', { query: { select: 'limite_mensal,limite_percentual' } });
+    } catch (e) {
+      if (!['42703', 'PGRST204'].includes(codigoPg(e))) throw e;
+      linhas = await db('GET', 'configuracoes', { query: { select: 'limite_mensal' } });
+    }
+    const linha = linhas[0] || {};
+    const semValor = linha.limite_mensal === null || linha.limite_mensal === undefined;
+    const semPercentual = linha.limite_percentual === null || linha.limite_percentual === undefined;
+    return {
+      valor: semValor ? null : emCentavos(linha.limite_mensal),
+      percentual: semPercentual ? null : Number(linha.limite_percentual),
+    };
+  }
+
+  const temLimite = (config) => config.valor !== null || config.percentual !== null;
+
+  /** Limite em centavos para um mês: o valor fixo, ou a porcentagem das receitas do mês (previstas). */
+  function limiteDoMes(config, rendaCentavos) {
+    if (config.percentual !== null) return Math.floor((rendaCentavos * config.percentual) / 100);
+    return config.valor;
   }
 
   /** nivel: "ok" (abaixo de 80%), "perto" (de 80% até o limite) ou "estourou" (passou do limite). */
@@ -451,7 +473,15 @@ const Backend = (function () {
 
   const doMes = (linhas, campo, mes) => linhas.filter((l) => String(l[campo]).startsWith(mes + '-'));
 
-  function montarResumo(mes, despesasDoMes, receitasDoMes, limite) {
+  function limiteMontado(config, recTotal, despTotal) {
+    if (!temLimite(config)) return null;
+    const situacao = situacaoDoLimite(limiteDoMes(config, recTotal), despTotal);
+    if (situacao === null) return null;
+    if (config.percentual === null) return Object.assign(situacao, { modo: 'valor', definido: null, renda: null });
+    return Object.assign(situacao, { modo: 'percentual', definido: config.percentual, renda: emReais(recTotal) });
+  }
+
+  function montarResumo(mes, despesasDoMes, receitasDoMes, config) {
     const [despTotal, despPago, despPendente] = somarPorStatus(despesasDoMes, 'pago');
     const [recTotal, recRecebido, recAReceber] = somarPorStatus(receitasDoMes, 'recebida');
     return {
@@ -462,7 +492,12 @@ const Backend = (function () {
         previsto: emReais(recTotal - despTotal), // tudo que entra - tudo que sai no mês
         atual: emReais(recRecebido - despPago), // só o que já aconteceu
       },
-      limite: situacaoDoLimite(limite, despTotal), // o limite olha o total de despesas do mês
+      // o limite olha o total de despesas do mês; em porcentagem, calcula sobre as receitas previstas do mês
+      limite: limiteMontado(config, recTotal, despTotal),
+      // o que o usuário escolheu (mesmo que ainda não dê para calcular, por falta de receitas no mês)
+      limite_config: !temLimite(config) ? null : config.percentual !== null
+        ? { modo: 'percentual', percentual: config.percentual, valor: null }
+        : { modo: 'valor', percentual: null, valor: emReais(config.valor) },
     };
   }
 
@@ -1003,29 +1038,55 @@ const Backend = (function () {
   // Endpoint: limite mensal de gastos
   // =====================================================================
 
+  function erroSemEtapa7(e) {
+    if (['42703', 'PGRST204'].includes(codigoPg(e))) {
+      erro('O banco de dados precisa da atualização da etapa 7. Rode o script migracao_etapa7.sql no Supabase.', 500);
+    }
+  }
+
+  /** Resposta do endpoint: modo "valor" ou "percentual" (ou null se não há limite). */
+  function respostaDoLimite(config) {
+    const modo = config.percentual !== null ? 'percentual' : config.valor !== null ? 'valor' : null;
+    return ok({
+      modo,
+      limite: config.valor === null ? null : emReais(config.valor),
+      percentual: config.percentual,
+    });
+  }
+
   async function limite(ctx) {
     const usuario = await exigirLogin();
     exigirMetodo(ctx, 'GET', 'PUT', 'DELETE');
 
     try {
       if (ctx.metodo === 'PUT') {
-        const valor = valorParam(ctx.corpo.limite);
+        const temValor = ctx.corpo.limite !== undefined && ctx.corpo.limite !== null;
+        const temPercentual = ctx.corpo.percentual !== undefined && ctx.corpo.percentual !== null;
+        if (temValor === temPercentual) erro('Informe o limite em reais ou em porcentagem (só um dos dois).', 422);
+
+        const json = { user_id: usuario.id, limite_mensal: null, limite_percentual: null, atualizado_em: new Date().toISOString() };
+        if (temValor) json.limite_mensal = valorParam(ctx.corpo.limite);
+        else json.limite_percentual = inteiroParam(ctx.corpo.percentual, 1, 100, 'Informe uma porcentagem de 1 a 100.');
+
         const linhas = await db('POST', 'configuracoes', {
-          query: { on_conflict: 'user_id', select: 'limite_mensal' },
-          json: { user_id: usuario.id, limite_mensal: valor, atualizado_em: new Date().toISOString() },
+          query: { on_conflict: 'user_id', select: 'limite_mensal,limite_percentual' },
+          json,
           headers: { Prefer: 'return=representation,resolution=merge-duplicates' },
         });
-        return ok({ limite: emReais(emCentavos(linhas[0].limite_mensal)) });
+        return respostaDoLimite({
+          valor: linhas[0].limite_mensal === null ? null : emCentavos(linhas[0].limite_mensal),
+          percentual: linhas[0].limite_percentual === null ? null : Number(linhas[0].limite_percentual),
+        });
       }
 
       if (ctx.metodo === 'DELETE') {
         await db('DELETE', 'configuracoes', { query: { user_id: 'eq.' + usuario.id, select: 'user_id' } });
-        return ok({ limite: null });
+        return respostaDoLimite({ valor: null, percentual: null });
       }
 
-      const centavos = await limiteEmCentavos();
-      return ok({ limite: centavos === null ? null : emReais(centavos) });
+      return respostaDoLimite(await lerConfiguracao());
     } catch (e) {
+      erroSemEtapa7(e);
       erroSemEtapa5(e);
       throw e;
     }
@@ -1044,7 +1105,7 @@ const Backend = (function () {
     try {
       const listaDespesas = await linhasDoPeriodo('despesas', 'data_vencimento', 'valor,status,data_vencimento', inicio, fim);
       const listaReceitas = await linhasDoPeriodo('receitas', 'data_recebimento', 'valor,status,data_recebimento', inicio, fim);
-      return ok(montarResumo(mes, listaDespesas, listaReceitas, await limiteEmCentavos()));
+      return ok(montarResumo(mes, listaDespesas, listaReceitas, await lerConfiguracao()));
     } catch (e) {
       erroSemEtapa5(e);
       throw e;
@@ -1078,7 +1139,7 @@ const Backend = (function () {
       listaReceitas = await linhasDoPeriodo('receitas', 'data_recebimento', 'valor,status,data_recebimento,tipo_receita_id', inicioDoPeriodo, fimDoMes);
       tiposDespesa = await db('GET', 'tipos_despesa', { query: { select: 'id,nome' } });
       tiposReceita = await db('GET', 'tipos_receita', { query: { select: 'id,nome' } });
-      limiteMensal = await limiteEmCentavos();
+      limiteMensal = await lerConfiguracao();
     } catch (e) {
       erroSemEtapa5(e);
       throw e;
@@ -1298,7 +1359,7 @@ const Backend = (function () {
       return ok({
         despesas: await contarLinhas('despesas'),
         receitas: await contarLinhas('receitas'),
-        limite: (await limiteEmCentavos()) !== null,
+        limite: temLimite(await lerConfiguracao()),
       });
     }
 
