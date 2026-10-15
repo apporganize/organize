@@ -226,15 +226,27 @@ const Resumo = {
     return 'Você usou ' + l.percentual + '% do limite. Restam ' + restante + '.';
   },
 
-  desenharLimite(l) {
+  desenharLimite(l, config) {
     const $ = (id) => document.getElementById(id);
-    $('limite').dataset.nivel = l ? l.nivel : 'nenhum';
-    $('btn-limite').textContent = l ? 'Alterar limite' : 'Definir limite';
+    // Limite em % mas o mês ainda não tem receitas: não dá para calcular, então explica o que falta.
+    const semRenda = !l && !!config && config.modo === 'percentual';
+    $('limite').dataset.nivel = l ? l.nivel : semRenda ? 'sem-renda' : 'nenhum';
+    $('btn-limite').textContent = l || semRenda ? 'Alterar limite' : 'Definir limite';
     $('limite-valores').hidden = !l;
     $('limite-barra').hidden = !l;
 
+    const origem = $('limite-origem');
+    if (origem) {
+      origem.hidden = !(l && l.modo === 'percentual');
+      if (!origem.hidden) {
+        origem.textContent = 'Limite de ' + l.definido + '% da renda do mês (' + Util.reais(Util.centavos(l.renda)) + ').';
+      }
+    }
+
     if (!l) {
-      $('limite-texto').textContent = 'Defina um limite mensal para ser avisado quando os gastos chegarem perto dele.';
+      $('limite-texto').textContent = semRenda
+        ? 'Seu limite é de ' + config.percentual + '% da renda do mês, mas ainda não há receitas neste mês. Cadastre uma receita para o app calcular o valor.'
+        : 'Defina um limite mensal para ser avisado quando os gastos chegarem perto dele.';
       return;
     }
     $('limite-valores').textContent = Util.reais(Util.centavos(l.usado)) + ' de ' + Util.reais(Util.centavos(l.limite));
@@ -251,7 +263,7 @@ const Resumo = {
     $('res-saldo-atual').textContent = Util.reais(Util.centavos(r.saldo.atual));
     Resumo.colorirSaldo($('res-saldo'), r.saldo.previsto);
     Resumo.colorirSaldo($('res-saldo-atual'), r.saldo.atual);
-    Resumo.desenharLimite(r.limite);
+    Resumo.desenharLimite(r.limite, r.limite_config);
     $('mes-resumo').hidden = false;
   },
 };
