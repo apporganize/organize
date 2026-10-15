@@ -2,7 +2,7 @@
 
 /**
  * Resumo do mês na tela de Lançamentos: receitas, despesas, saldo e limite de gastos.
- * Busca api/resumo.php sempre que o mês muda ou alguma receita/despesa muda
+ * Busca api/resumo sempre que o mês muda ou alguma receita/despesa muda
  * (eventos "mes:mudou" e "lancamentos:alterados", disparados por index.js e receitas.js).
  */
 (function () {
@@ -27,7 +27,7 @@
   async function carregar() {
     const meu = ++pedido;
     try {
-      const r = await API.get('api/resumo.php?mes=' + encodeURIComponent(window.OrganizeMes.atual));
+      const r = await API.get('api/resumo?mes=' + encodeURIComponent(window.OrganizeMes.atual));
       if (meu !== pedido) return;
       UI.ocultar(msg);
       limiteAtual = r.limite ? r.limite.limite : null;
@@ -75,7 +75,7 @@
     }
     UI.carregando(btnSalvar, true, 'Salvando...');
     try {
-      await API.put('api/limite.php', { limite: valor });
+      await API.put('api/limite', { limite: valor });
       dlg.close();
       await carregar();
     } catch (erro) {
@@ -94,7 +94,7 @@
     });
     if (!confirmou) return;
     try {
-      await API.excluir('api/limite.php');
+      await API.excluir('api/limite');
       dlg.close();
       await carregar();
     } catch (erro) {

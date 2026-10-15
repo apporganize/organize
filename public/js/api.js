@@ -2,7 +2,7 @@
 
 /**
  * Funções compartilhadas por todas as telas:
- *   API  - chamadas fetch (AJAX) ao back-end PHP
+ *   API  - chamadas ao backend (backend.js), que conversa com o Supabase
  *   Auth - ações de autenticação
  *   UI   - pequenos ajudantes de interface
  */
@@ -23,40 +23,17 @@ const API = {
   },
 
   async requisitar(url, { metodo = 'GET', corpo } = {}) {
-    const opcoes = {
-      method: metodo,
-      credentials: 'same-origin',
-      headers: {
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest', // exigido pelo back-end (proteção contra CSRF)
-      },
-    };
-    if (corpo !== undefined) {
-      opcoes.headers['Content-Type'] = 'application/json';
-      opcoes.body = JSON.stringify(corpo);
-    }
+    // Não há servidor próprio: o backend.js (JavaScript) valida, faz as contas e fala com o Supabase.
+    const { status, dados } = await Backend.tratar(metodo, url, corpo);
 
-    let resposta;
-    try {
-      resposta = await fetch(url, opcoes);
-    } catch (e) {
-      throw new ApiError('Sem conexão com o servidor. Confira se ele está rodando e tente de novo.', 0);
-    }
-
-    let dados = null;
-    try {
-      dados = await resposta.json();
-    } catch (e) {
-      // resposta sem JSON (ex.: erro fatal do PHP)
-    }
-
-    if (!resposta.ok || (dados && dados.ok === false)) {
+    if (status >= 400 || !dados || dados.ok === false) {
       // Sessão expirada em uma tela interna: volta para o login.
-      if (resposta.status === 401 && !API.paginaPublica() && !API.indoParaLogin) {
+      if (status === 401 && !API.paginaPublica() && !API.indoParaLogin) {
+        try { sessionStorage.removeItem('organize.avatar'); } catch (e) { /* ok */ }
         API.indoParaLogin = true; // várias chamadas em paralelo podem receber 401: redireciona uma vez só
         window.location.replace('login.html');
       }
-      throw new ApiError((dados && dados.erro) || 'Erro inesperado. Tente novamente.', resposta.status);
+      throw new ApiError((dados && dados.erro) || 'Erro inesperado. Tente novamente.', status);
     }
     return dados;
   },
@@ -78,12 +55,17 @@ const API = {
   },
 };
 
+// Ao entrar numa conta, esquece o círculo (foto/inicial) guardado de quem usou antes neste navegador.
+function esquecerAvatar() {
+  try { sessionStorage.removeItem('organize.avatar'); } catch (e) { /* ok */ }
+}
+
 const Auth = {
   // opcional = true: sem sessão responde { usuario: null } em vez de erro 401
-  me(opcional = false)          { return API.get('api/auth.php?acao=me' + (opcional ? '&opcional=1' : '')); },
-  entrar(email, senha)          { return API.post('api/auth.php?acao=entrar', { email, senha }); },
-  cadastrar(nome, email, senha) { return API.post('api/auth.php?acao=cadastrar', { nome, email, senha }); },
-  sair()                        { return API.post('api/auth.php?acao=sair'); },
+  me(opcional = false)          { return API.get('api/auth?acao=me' + (opcional ? '&opcional=1' : '')); },
+  entrar(email, senha)          { esquecerAvatar(); return API.post('api/auth?acao=entrar', { email, senha }); },
+  cadastrar(nome, email, senha) { esquecerAvatar(); return API.post('api/auth?acao=cadastrar', { nome, email, senha }); },
+  sair()                        { return API.post('api/auth?acao=sair'); },
 };
 
 const UI = {

@@ -72,7 +72,7 @@
 
   async function carregar() {
     try {
-      const resposta = await API.get('api/cartoes.php');
+      const resposta = await API.get('api/cartoes');
       cartoes = resposta.cartoes.sort(comparar);
       desenhar();
     } catch (erro) {
@@ -100,7 +100,7 @@
 
     UI.carregando(btnAdicionar, true, 'Adicionando...');
     try {
-      const resposta = await API.post('api/cartoes.php', { nome, ultimos_4_digitos: digitos });
+      const resposta = await API.post('api/cartoes', { nome, ultimos_4_digitos: digitos });
       cartoes.push(resposta.cartao);
       cartoes.sort(comparar);
       desenhar();
@@ -145,7 +145,7 @@
     const botao = formEditar.querySelector('[type="submit"]');
     UI.carregando(botao, true, 'Salvando...');
     try {
-      const resposta = await API.put('api/cartoes.php?id=' + encodeURIComponent(editandoId), {
+      const resposta = await API.put('api/cartoes?id=' + encodeURIComponent(editandoId), {
         nome,
         ultimos_4_digitos: digitos,
       });
@@ -170,7 +170,7 @@
     if (!confirmou) return;
 
     try {
-      await API.excluir('api/cartoes.php?id=' + encodeURIComponent(cartao.id));
+      await API.excluir('api/cartoes?id=' + encodeURIComponent(cartao.id));
       cartoes = cartoes.filter((item) => item.id !== cartao.id);
       desenhar();
     } catch (erro) {

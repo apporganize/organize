@@ -174,7 +174,7 @@
     vazioTitulo.textContent = 'Nenhuma receita em ' + nome.charAt(0).toLowerCase() + nome.slice(1);
     UI.ocultar(msg);
     try {
-      const resposta = await API.get('api/receitas.php?mes=' + encodeURIComponent(mesAtual()));
+      const resposta = await API.get('api/receitas?mes=' + encodeURIComponent(mesAtual()));
       if (meu !== pedido) return;
       receitas = resposta.receitas;
       desenhar();
@@ -186,7 +186,7 @@
 
   document.addEventListener('mes:mudou', carregarMes);
 
-  const base = API.get('api/tipos.php?de=receita')
+  const base = API.get('api/tipos?de=receita')
     .then((resposta) => { tipos = resposta.tipos; })
     .catch((erro) => mostrarErro(erro.message));
 
@@ -347,8 +347,8 @@
 
     UI.carregando(btnSalvar, true, 'Salvando...');
     try {
-      if (editandoId) await API.put('api/receitas.php?id=' + encodeURIComponent(editandoId), corpo);
-      else await API.post('api/receitas.php', corpo);
+      if (editandoId) await API.put('api/receitas?id=' + encodeURIComponent(editandoId), corpo);
+      else await API.post('api/receitas', corpo);
       dlg.close();
       // se a data caiu em outro mês, a tela acompanha a receita (index.js muda o mês e avisa)
       if (corpo.data_recebimento.slice(0, 7) !== mesAtual()) window.OrganizeMes.irPara(corpo.data_recebimento.slice(0, 7));
@@ -396,7 +396,7 @@
     if (!escopo) return;
 
     try {
-      await API.excluir('api/receitas.php?id=' + encodeURIComponent(receita.id) + '&escopo=' + escopo);
+      await API.excluir('api/receitas?id=' + encodeURIComponent(receita.id) + '&escopo=' + escopo);
       dlg.close();
       if (escopo === 'esta') {
         receitas = receitas.filter((r) => r.id !== receita.id);
@@ -415,7 +415,7 @@
     const novo = receita.status === 'recebida' ? 'a_receber' : 'recebida';
     botao.disabled = true;
     try {
-      const resposta = await API.requisitar('api/receitas.php?id=' + encodeURIComponent(receita.id), {
+      const resposta = await API.requisitar('api/receitas?id=' + encodeURIComponent(receita.id), {
         metodo: 'PATCH',
         corpo: { status: novo },
       });

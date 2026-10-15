@@ -3,7 +3,7 @@
 /**
  * Painel: receitas x despesas dos últimos 6 meses (colunas) e totais por tipo no mês escolhido (barras).
  * Os gráficos são desenhados aqui mesmo (SVG e HTML), sem biblioteca externa: o app continua leve e offline.
- * Toda a conta (somas, porcentagens) vem pronta de api/painel.php.
+ * Toda a conta (somas, porcentagens) vem pronta de api/painel.
  */
 (function () {
   const $ = (id) => document.getElementById(id);
@@ -14,7 +14,7 @@
   const dica = $('grafico-dica');
 
   let mes = Util.mesDaUrl();
-  let dados = null; // última resposta de api/painel.php
+  let dados = null; // última resposta de api/painel
   let pedido = 0;
   let larguraDesenhada = 0;
   let toqueEm = 0; // quando foi o último toque no gráfico
@@ -232,7 +232,7 @@
     document.title = 'Painel · ' + Util.nomeDoMes(mes) + ' - organize!';
     UI.ocultar(msg);
     try {
-      const resposta = await API.get('api/painel.php?mes=' + encodeURIComponent(mes) + '&meses=6');
+      const resposta = await API.get('api/painel?mes=' + encodeURIComponent(mes) + '&meses=6');
       if (meu !== pedido) return;
       dados = resposta;
       desenharTudo();

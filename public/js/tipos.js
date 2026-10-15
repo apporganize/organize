@@ -38,7 +38,7 @@
   let pedido = 0; // descarta respostas antigas quando a aba muda rápido
 
   // Mesmos endereços para os dois tipos; receita leva ?de=receita
-  const endereco = (extra = '') => 'api/tipos.php?de=' + de + extra;
+  const endereco = (extra = '') => 'api/tipos?de=' + de + extra;
 
   // Ignora maiúsculas e acentos: "saude" e "Saúde" contam como o mesmo nome
   const mesmoNome = (a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }) === 0;

@@ -251,7 +251,7 @@
     desenharMes();
     UI.ocultar(msg);
     try {
-      const resposta = await API.get('api/despesas.php?mes=' + encodeURIComponent(mes));
+      const resposta = await API.get('api/despesas?mes=' + encodeURIComponent(mes));
       if (meu !== pedido) return;
       despesas = resposta.despesas;
       desenhar();
@@ -274,7 +274,7 @@
   $('mes-seguinte').addEventListener('click', () => irParaMes(deslocarMes(1)));
 
   // Tipos e cartões alimentam os nomes da lista e as opções do formulário.
-  const base = Promise.all([API.get('api/tipos.php'), API.get('api/cartoes.php')])
+  const base = Promise.all([API.get('api/tipos'), API.get('api/cartoes')])
     .then(([t, c]) => {
       tipos = t.tipos;
       cartoes = c.cartoes;
@@ -538,9 +538,9 @@
     UI.carregando(btnSalvar, true, 'Salvando...');
     try {
       if (editandoId) {
-        await API.put('api/despesas.php?id=' + encodeURIComponent(editandoId), corpo);
+        await API.put('api/despesas?id=' + encodeURIComponent(editandoId), corpo);
       } else {
-        await API.post('api/despesas.php', corpo);
+        await API.post('api/despesas', corpo);
       }
       dlg.close();
       // se o vencimento caiu em outro mês, a tela acompanha a despesa
@@ -595,7 +595,7 @@
     if (!escopo) return;
 
     try {
-      await API.excluir('api/despesas.php?id=' + encodeURIComponent(despesa.id) + '&escopo=' + escopo);
+      await API.excluir('api/despesas?id=' + encodeURIComponent(despesa.id) + '&escopo=' + escopo);
       dlg.close();
       if (escopo === 'esta') {
         despesas = despesas.filter((d) => d.id !== despesa.id);
@@ -614,7 +614,7 @@
     const novo = despesa.status === 'pago' ? 'pendente' : 'pago';
     botao.disabled = true;
     try {
-      const resposta = await API.requisitar('api/despesas.php?id=' + encodeURIComponent(despesa.id), {
+      const resposta = await API.requisitar('api/despesas?id=' + encodeURIComponent(despesa.id), {
         metodo: 'PATCH',
         corpo: { status: novo },
       });

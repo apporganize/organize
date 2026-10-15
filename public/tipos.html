@@ -43,8 +43,12 @@
       </nav>
 
       <div class="topo-usuario">
+        <a class="avatar" id="avatar" href="perfil.html" data-avatar aria-label="Meu perfil">
+          <span class="avatar-letra" aria-hidden="true"></span>
+          <img class="avatar-img" alt="" hidden>
+        </a>
         <span class="topo-nome" id="usuario-nome"></span>
-        <button type="button" class="btn btn-secundario btn-sm" id="btn-instalar" hidden>Instalar app</button>
+        <button type="button" class="btn btn-secundario btn-sm" id="btn-instalar" hidden>Instalar<span class="instalar-app"> app</span></button>
         <button type="button" class="btn btn-secundario btn-sm" id="btn-sair">Sair</button>
       </div>
     </div>
@@ -110,7 +114,9 @@
     </form>
   </dialog>
 
+  <script src="js/config.js"></script>
   <script src="js/api.js"></script>
+  <script src="js/backend.js"></script>
   <script src="js/app.js"></script>
   <script src="js/pwa.js"></script>
   <script src="js/tipos.js"></script>

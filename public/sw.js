@@ -5,10 +5,11 @@
  *
  * - Páginas, CSS, JS e ícones: "rede primeiro", sempre revalidando. Busca a versão mais nova e só usa a cópia
  *   guardada quando não há internet. Assim, ao atualizar os arquivos, o app atualiza junto.
- * - Dados (/api/): nunca passam pelo cache. Despesas, cartões e sessão ficam só no servidor.
+ * - Dados: vêm do Supabase (outro endereço), que este service worker nunca intercepta. Despesas, cartões
+ *   e sessão não ficam guardados aqui.
  */
 
-const VERSAO = 'organize-v2';
+const VERSAO = 'organize-v3';
 const PRE_CACHE = ['offline.html', 'icons/icon-192.png'];
 
 self.addEventListener('install', (evento) => {
@@ -32,7 +33,6 @@ self.addEventListener('fetch', (evento) => {
   const url = new URL(pedido.url);
 
   if (pedido.method !== 'GET' || url.origin !== self.location.origin) return;
-  if (url.pathname.includes('/api/')) return;
 
   evento.respondWith(
     // cache: 'no-cache' faz o navegador confirmar com o servidor se o arquivo mudou (sem isso,

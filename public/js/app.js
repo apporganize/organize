@@ -242,7 +242,7 @@ const Resumo = {
     $('limite-texto').textContent = Resumo.fraseDoLimite(l);
   },
 
-  // r = resposta de api/resumo.php (ou o campo "resumo" de api/painel.php)
+  // r = resposta de api/resumo (ou o campo "resumo" de api/painel)
   desenhar(r) {
     const $ = (id) => document.getElementById(id);
     $('res-receitas').textContent = Util.reais(Util.centavos(r.receitas.total));
@@ -256,10 +256,86 @@ const Resumo = {
   },
 };
 
+/**
+ * Avatar - o círculo com a foto (ou a inicial do nome) no topo de todas as telas e na tela de perfil.
+ * Todo elemento com data-avatar tem <span class="avatar-letra"> e <img class="avatar-img">.
+ * A foto (imagem em texto, data URL) vem de api/foto e fica guardada na aba (sessionStorage) junto do número da versão;
+ * o número muda quando a foto muda, então só baixamos de novo quando preciso.
+ * Os últimos dados ficam na sessão da aba (sessionStorage) só para o círculo não "piscar" ao trocar de tela.
+ */
+const Avatar = {
+  chave: 'organize.avatar',
+  atual: { nome: '', foto_v: null, foto: null },
+  carregando: null, // versão da foto que está sendo baixada agora (evita pedir duas vezes)
+
+  lembrar() {
+    try { sessionStorage.setItem(Avatar.chave, JSON.stringify(Avatar.atual)); } catch (e) { /* sem armazenamento (ou cheio): segue sem */ }
+  },
+
+  esquecer() {
+    try { sessionStorage.removeItem(Avatar.chave); } catch (e) { /* ok */ }
+  },
+
+  recuperar() {
+    try {
+      const guardado = JSON.parse(sessionStorage.getItem(Avatar.chave) || 'null');
+      if (guardado && typeof guardado.nome === 'string') Avatar.atualizar(guardado, false);
+    } catch (e) { /* ok */ }
+  },
+
+  // dados: { nome?, foto_v?, foto? } (foto_v nulo = sem foto; foto = data URL da versão foto_v)
+  atualizar(dados, guardar = true) {
+    const versaoAnterior = Avatar.atual.foto_v;
+    Object.assign(Avatar.atual, dados);
+    const { nome, foto_v: versao } = Avatar.atual;
+    if (!versao || versao !== versaoAnterior && !('foto' in dados)) Avatar.atual.foto = null;
+    const letra = (nome || '').trim().charAt(0).toLocaleUpperCase('pt-BR') || '?';
+
+    document.querySelectorAll('[data-avatar]').forEach((el) => {
+      const texto = el.querySelector('.avatar-letra');
+      const imagem = el.querySelector('.avatar-img');
+      texto.textContent = letra;
+      if (el.tagName === 'A') el.setAttribute('aria-label', nome ? 'Meu perfil, ' + nome : 'Meu perfil');
+
+      const origem = versao ? Avatar.atual.foto : null;
+      if (!origem) {
+        imagem.hidden = true;
+        imagem.removeAttribute('src');
+        texto.hidden = false;
+        return;
+      }
+      imagem.onload = () => { imagem.hidden = false; texto.hidden = true; };
+      imagem.onerror = () => { imagem.hidden = true; texto.hidden = false; };
+      if (imagem.getAttribute('src') !== origem) imagem.src = origem;
+      else if (imagem.complete && imagem.naturalWidth > 0) imagem.onload();
+    });
+
+    if (guardar) Avatar.lembrar();
+    if (versao && !Avatar.atual.foto) Avatar.baixarFoto(versao);
+  },
+
+  // Baixa a foto da versão pedida (uma vez) e desenha. Se a foto mudou no meio do caminho, descarta.
+  async baixarFoto(versao) {
+    if (Avatar.carregando === versao) return;
+    Avatar.carregando = versao;
+    try {
+      const { foto } = await API.get('api/foto');
+      if (Avatar.atual.foto_v === versao && typeof foto === 'string') Avatar.atualizar({ foto });
+    } catch (e) {
+      /* sem foto por enquanto: fica a inicial do nome */
+    } finally {
+      if (Avatar.carregando === versao) Avatar.carregando = null;
+    }
+  },
+};
+
 const App = {
   // Liga o botão Sair, mostra o nome no topo e devolve o usuário (ou null se algo falhar).
   async iniciar() {
+    Avatar.recuperar();
+
     document.getElementById('btn-sair').addEventListener('click', async () => {
+      Avatar.esquecer();
       try {
         await Auth.sair();
       } catch (erro) {
@@ -272,6 +348,7 @@ const App = {
       const { usuario } = await Auth.me();
       const nome = document.getElementById('usuario-nome');
       if (nome) nome.textContent = usuario.nome;
+      Avatar.atualizar({ nome: usuario.nome, foto_v: usuario.foto_v || null });
       return usuario;
     } catch (erro) {
       return null; // 401 já leva ao login (api.js)
