@@ -138,8 +138,8 @@
     campoEditar.value = tipo.nome;
     campoEditarConta.checked = Boolean(tipo.so_vencimento);
     UI.ocultar(msgEditar);
-    dlgEditar.showModal();
-    campoEditar.select();
+    Dialogo.abrir(dlgEditar, campoEditar);
+    if (!window.matchMedia('(pointer: coarse)').matches) campoEditar.select();
   }
 
   dlgEditar.querySelectorAll('[data-fechar]').forEach((botao) => {
