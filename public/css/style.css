@@ -1160,6 +1160,7 @@ input.entrada[type="date"] {
 
 .limite[data-nivel="ok"]       { --lim-cor: var(--verde-escuro); --lim-fill: var(--verde); --lim-trilho: var(--ok-fundo); }
 .limite[data-nivel="perto"]    { --lim-cor: #7a5600; --lim-fill: #fab219; --lim-trilho: #fdf0cf; --lim-fundo: #fff8e6; --lim-borda: #f1d38a; }
+.limite[data-nivel="sem-renda"] { --lim-cor: var(--tinta-suave); }
 .limite[data-nivel="estourou"] { --lim-cor: var(--erro-escuro); --lim-fill: #d03b3b; --lim-trilho: #f9dcdc; --lim-fundo: var(--erro-fundo); --lim-borda: #f3b7b2; }
 
 .limite-topo {
@@ -1180,6 +1181,13 @@ input.entrada[type="date"] {
   margin: 0.1rem 0 0.45rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.limite-origem {
+  margin: -0.3rem 0 0.45rem;
+  font-size: 0.8125rem;
+  color: var(--tinta-suave);
   overflow-wrap: anywhere;
 }
 
@@ -1231,6 +1239,7 @@ input.entrada[type="date"] {
 /* um ícone de forma diferente para cada nível: o aviso nunca depende só da cor */
 .limite-icone g { display: none; }
 .limite[data-nivel="nenhum"] .ic-nenhum,
+.limite[data-nivel="sem-renda"] .ic-nenhum,
 .limite[data-nivel="ok"] .ic-ok,
 .limite[data-nivel="perto"] .ic-perto,
 .limite[data-nivel="estourou"] .ic-estourou { display: inline; }
@@ -1627,4 +1636,68 @@ a.avatar[aria-current="page"] { box-shadow: 0 0 0 2px var(--verde); }
 /* valores enormes nunca alargam a página: se não couberem na coluna, quebram em vez de estourar */
 @media (max-width: 26rem) {
   .mes-resumo-linha dd { white-space: normal; overflow-wrap: anywhere; }
+}
+
+/* ---------- Etapa 7: limite em porcentagem (janela do limite) ---------- */
+
+.limite-previa {
+  min-height: 1.25rem;
+  margin: -0.4rem 0 0.9rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--verde-escuro);
+  overflow-wrap: anywhere;
+}
+
+.limite-previa:empty { display: none; }
+
+.limite-dica {
+  margin: 0 0 1rem;
+  padding: 0.75rem 0.85rem;
+  background: var(--ok-fundo);
+  border-radius: var(--raio);
+}
+
+.limite-dica-texto,
+.limite-dica-nota {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.limite-dica-nota {
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--tinta-suave);
+}
+
+.limite-sugestoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.sugestao {
+  min-width: 4rem;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  font: inherit;
+  font-weight: 700;
+  color: var(--verde-escuro);
+  background: var(--superficie);
+  border: 1.5px solid var(--verde);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.sugestao[aria-pressed="true"] {
+  color: #fff;
+  background: var(--verde);
+}
+
+.sugestao:focus-visible {
+  outline: 3px solid rgba(17, 128, 74, 0.45);
+  outline-offset: 2px;
 }
