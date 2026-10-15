@@ -9,7 +9,7 @@
  *   e sessão não ficam guardados aqui.
  */
 
-const VERSAO = 'organize-v4';
+const VERSAO = 'organize-v5';
 const PRE_CACHE = ['offline.html', 'icons/icon-192.png'];
 
 self.addEventListener('install', (evento) => {
