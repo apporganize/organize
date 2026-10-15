@@ -199,7 +199,8 @@
     );
   }
 
-  function desenhar() {
+  // avisarResumo: false na primeira carga e ao trocar de mês (o resumo já busca por conta própria).
+  function desenhar(avisarResumo = true) {
     const dias = [];
     for (const despesa of despesas) {
       const ultimo = dias[dias.length - 1];
@@ -233,7 +234,7 @@
     $('carregando').hidden = true;
     resumo.hidden = despesas.length === 0;
     vazio.hidden = despesas.length > 0;
-    avisar('lancamentos:alterados');
+    if (avisarResumo) avisar('lancamentos:alterados');
   }
 
   function desenharMes() {
@@ -246,15 +247,17 @@
 
   // ---------- carregar ----------
 
-  async function carregarMes() {
+  // avisarResumo: só depois de salvar/excluir, quando o resumo do mês precisa ser refeito.
+  async function carregarMes(avisarResumo = false) {
     const meu = ++pedido;
     desenharMes();
     UI.ocultar(msg);
     try {
-      const resposta = await API.get('api/despesas?mes=' + encodeURIComponent(mes));
+      // a lista sai junto com tipos/cartões (não espera por eles); os nomes são usados só ao desenhar
+      const [resposta] = await Promise.all([API.get('api/despesas?mes=' + encodeURIComponent(mes)), base]);
       if (meu !== pedido) return;
       despesas = resposta.despesas;
-      desenhar();
+      desenhar(avisarResumo === true);
     } catch (erro) {
       if (meu !== pedido) return;
       mostrarErro(erro.message);
@@ -546,7 +549,7 @@
       // se o vencimento caiu em outro mês, a tela acompanha a despesa
       const mesDoVencimento = corpo.data_vencimento.slice(0, 7);
       if (mesDoVencimento !== mes) irParaMes(mesDoVencimento);
-      else await carregarMes();
+      else await carregarMes(true);
     } catch (e) {
       UI.mostrar(msgDespesa, e.message);
     } finally {
@@ -601,7 +604,7 @@
         despesas = despesas.filter((d) => d.id !== despesa.id);
         desenhar();
       } else {
-        await carregarMes();
+        await carregarMes(true);
       }
     } catch (erro) {
       Dialogo.aviso({ titulo: 'Não foi possível excluir', texto: erro.message });
@@ -630,5 +633,5 @@
 
   desenharMes();
   App.iniciar();
-  base.then(carregarMes);
+  carregarMes();
 })();
