@@ -1050,13 +1050,13 @@ input.entrada[type="date"] {
 
 .dialogo--form form {
   display: flex;
-  flex: 1;
+  flex: 1 1 auto; /* "auto" e não "1" (=1 1 0%): o Safari do iPhone trata 0% como altura zero e a janela encolhia */
   flex-direction: column;
   min-height: 0;
 }
 
 .dialogo-corpo {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   margin: 0 -1rem;
   padding: 0.25rem 1rem 0;
