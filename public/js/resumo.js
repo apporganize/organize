@@ -120,8 +120,8 @@
     campoLimite.value = configAtual && configAtual.modo === 'valor' ? Util.valorParaCampo(configAtual.valor) : '';
     btnRemover.hidden = !configAtual;
     definirModo(configAtual ? configAtual.modo : 'percentual');
-    dlg.showModal();
-    (modoEscolhido() === 'percentual' ? campoPercentual : campoLimite).select();
+    Dialogo.abrir(dlg, null);
+    if (!window.matchMedia('(pointer: coarse)').matches) (modoEscolhido() === 'percentual' ? campoPercentual : campoLimite).select();
   }
 
   btnLimite.addEventListener('click', abrirLimite);
