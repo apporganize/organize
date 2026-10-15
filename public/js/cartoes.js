@@ -119,8 +119,8 @@
     editarNome.value = cartao.nome;
     editarDigitos.value = cartao.ultimos_4_digitos;
     UI.ocultar(msgEditar);
-    dlgEditar.showModal();
-    editarNome.select();
+    Dialogo.abrir(dlgEditar, editarNome);
+    if (!window.matchMedia('(pointer: coarse)').matches) editarNome.select();
   }
 
   dlgEditar.querySelectorAll('[data-fechar]').forEach((botao) => {
