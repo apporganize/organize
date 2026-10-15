@@ -138,7 +138,8 @@
     );
   }
 
-  function desenhar() {
+  // avisarResumo: false na primeira carga e ao trocar de mês (o resumo já busca por conta própria).
+  function desenhar(avisarResumo = true) {
     const dias = [];
     for (const receita of receitas) {
       const ultimo = dias[dias.length - 1];
@@ -163,28 +164,28 @@
 
     resumo.hidden = receitas.length === 0;
     vazio.hidden = receitas.length > 0;
-    document.dispatchEvent(new CustomEvent('lancamentos:alterados'));
+    if (avisarResumo) document.dispatchEvent(new CustomEvent('lancamentos:alterados'));
   }
 
   // ---------- carregar ----------
 
-  async function carregarMes() {
+  async function carregarMes(avisarResumo = false) {
     const meu = ++pedido;
     const nome = Util.nomeDoMes(mesAtual());
     vazioTitulo.textContent = 'Nenhuma receita em ' + nome.charAt(0).toLowerCase() + nome.slice(1);
     UI.ocultar(msg);
     try {
-      const resposta = await API.get('api/receitas?mes=' + encodeURIComponent(mesAtual()));
+      const [resposta] = await Promise.all([API.get('api/receitas?mes=' + encodeURIComponent(mesAtual())), base]);
       if (meu !== pedido) return;
       receitas = resposta.receitas;
-      desenhar();
+      desenhar(avisarResumo === true);
     } catch (erro) {
       if (meu !== pedido) return;
       mostrarErro(erro.message);
     }
   }
 
-  document.addEventListener('mes:mudou', carregarMes);
+  document.addEventListener('mes:mudou', () => carregarMes());
 
   const base = API.get('api/tipos?de=receita')
     .then((resposta) => { tipos = resposta.tipos; })
@@ -352,7 +353,7 @@
       dlg.close();
       // se a data caiu em outro mês, a tela acompanha a receita (index.js muda o mês e avisa)
       if (corpo.data_recebimento.slice(0, 7) !== mesAtual()) window.OrganizeMes.irPara(corpo.data_recebimento.slice(0, 7));
-      else await carregarMes();
+      else await carregarMes(true);
     } catch (e) {
       UI.mostrar(msgForm, e.message);
     } finally {
@@ -402,7 +403,7 @@
         receitas = receitas.filter((r) => r.id !== receita.id);
         desenhar();
       } else {
-        await carregarMes();
+        await carregarMes(true);
       }
     } catch (erro) {
       Dialogo.aviso({ titulo: 'Não foi possível excluir', texto: erro.message });
@@ -432,5 +433,5 @@
   // ---------- começo ----------
 
   mostrarAba(abaDaUrl());
-  base.then(carregarMes);
+  carregarMes();
 })();
