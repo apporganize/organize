@@ -1,90 +1,96 @@
 # organize!
 
-App web de controle de finanças pessoais. PHP + AJAX (fetch), HTML, CSS e JS puro, com banco no Supabase.
+App web de controle de finanças pessoais, instalável no celular (PWA). HTML, CSS e JavaScript puro, com login e banco no
+[Supabase](https://supabase.com). **Não tem servidor próprio**: o app roda inteiro no navegador e é publicado de graça
+no GitHub Pages.
 
-## Requisitos
+## Como funciona
 
-- PHP 8.0 ou superior, com as extensões **cURL** e **mbstring** habilitadas
-- Um projeto no [Supabase](https://supabase.com)
-- Git
-
-## Configuração do Supabase
-
-1. Crie um projeto no Supabase.
-2. Abra **SQL Editor → New query**, cole o conteúdo de `sql/schema.sql` e clique em **Run**.
-   - Se você já tinha rodado o `schema.sql` antes da etapa 4, **não rode o `schema.sql` de novo**. Rode, nesta ordem, `sql/migracao_etapa4.sql` e `sql/migracao_etapa4b.sql` (podem rodar mais de uma vez sem problema).
-3. Vá em **Authentication → Providers → Email** e desligue **Confirm email** (para testar sem precisar confirmar o e-mail).
-4. Vá em **Project Settings → API** e copie a **Project URL** e a chave pública (**anon** ou **publishable**).
-   - Nunca use a chave `service_role` / `secret` neste projeto.
-
-## Rodando localmente
-
-```bash
-cp .env.example .env        # no Windows: copy .env.example .env
-# edite o .env com a URL e a chave do seu projeto
-
-php -S localhost:8000 -t public
+```
+navegador (HTML + JS)  ──►  Supabase (login + banco, com segurança por linha / RLS)
+        ▲
+GitHub Pages (só entrega os arquivos da pasta public/)
 ```
 
-Teste a conexão em: <http://localhost:8000/api/ping.php>
+## Publicar no GitHub Pages (passo a passo)
 
-Resposta esperada: `"curl": true`, `"mbstring": true`, as duas variáveis do `env` como `true` e `"supabase_alcancavel": true`.
+1. **Banco de dados (Supabase).** Em **SQL Editor → New query**, rode `sql/schema.sql` (instalação nova).
+   - Banco já existente: **não rode o `schema.sql` de novo**; rode, nesta ordem, só o que faltar entre
+     `sql/migracao_etapa4.sql`, `sql/migracao_etapa4b.sql`, `sql/migracao_etapa5.sql`, `sql/migracao_etapa6.sql` e `sql/migracao_etapa7.sql`.
+2. **Login.** Em **Authentication → Providers → Email**, deixe **Confirm email** desligado (para entrar logo após o cadastro).
+3. **Configure o app.** Edite `public/js/config.js` com a **Project URL** e a chave **pública** (*anon public* ou *publishable*)
+   de **Project Settings → API**. Nunca use a chave `service_role` / `secret` (o app se recusa a funcionar com ela).
+4. **Suba para o GitHub** (a publicação é automática pelo workflow `.github/workflows/pages.yml`):
+   ```bash
+   git add .
+   git commit -m "organize! no GitHub Pages"
+   git push
+   ```
+5. **Ligue o Pages.** No repositório: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+   (O GitHub Pages gratuito exige repositório **público**.) Acompanhe em **Actions**; ao terminar, o endereço será
+   `https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO/`.
+6. **Diga ao Supabase qual é o endereço.** Em **Authentication → URL Configuration**, coloque o endereço acima em
+   **Site URL** (e também em **Redirect URLs**).
+7. Abra o endereço no celular, crie sua conta e instale o app (veja abaixo). Cada pessoa cria a própria conta e só enxerga os próprios dados.
 
-## Subindo para o GitHub
+### É seguro deixar o repositório público?
+
+Sim. No repositório só existe a **chave pública** do Supabase, feita para ficar à vista no navegador. Quem protege os dados é a
+**segurança por linha (RLS)** do banco: cada pessoa só lê e altera as próprias linhas, mesmo que alguém use a chave pública por
+fora do app. Não há senhas, `.env` nem chave secreta no código.
+
+Atenção: como o cadastro é aberto, qualquer pessoa com o link pode criar uma conta (e ver apenas os próprios dados). Se quiser
+fechar, em **Authentication → Sign In / Providers** desative *Allow new users to sign up* depois que você e quem for usar já
+tiverem criado as contas.
+
+## Testar no seu computador
+
+Qualquer servidor de arquivos estáticos serve (o app é só HTML/CSS/JS). Com `js/config.js` preenchido:
 
 ```bash
-git init
-git add .
-git status                  # confira que o .env NÃO aparece na lista
-git commit -m "Estrutura inicial do organize!"
-git branch -M main
-git remote add origin https://github.com/SEU-USUARIO/organize.git
-git push -u origin main
+python -m http.server 8000 -d public      # ou: npx serve public
 ```
 
-O `.env` está no `.gitignore`: suas chaves não sobem para o GitHub. Quem clonar o projeto usa o `.env.example` como modelo.
+Abra <http://localhost:8000>. Para o login funcionar em `localhost`, o Supabase aceita sem configuração extra.
 
 ## Estrutura
 
 ```
 organize/
-├── public/              → raiz web (php -S ... -t public)
-│   ├── api/             → endpoints PHP (JSON)
-│   ├── css/
-│   └── js/
-├── src/
-│   ├── config.php       → .env, constantes e sessão
-│   ├── supabase.php     → cliente Supabase (Auth + REST)
-│   └── helpers.php      → respostas JSON, validação, tratamento de erros
-├── sql/schema.sql       → tabelas, regras e políticas RLS (instalação nova)
-├── sql/migracao_etapa4.sql → atualiza um banco já existente (vencimento, parcelas, recorrência)
-├── sql/migracao_etapa4b.sql → atualiza um banco já existente (tipos "conta com vencimento")
-├── .env.example
+├── .github/workflows/pages.yml  → publica a pasta public/ no GitHub Pages
+├── public/                      → o app (é isto que vai para o ar)
+│   ├── *.html                   → telas (login, cadastro, lançamentos, painel, tipos, cartões, perfil)
+│   ├── css/style.css
+│   ├── js/config.js             → URL e chave PÚBLICA do Supabase (único arquivo a editar)
+│   ├── js/backend.js            → login, validações, contas (resumo, limite, painel) e acesso ao Supabase
+│   ├── js/api.js                → ponte entre as telas e o backend.js
+│   ├── js/*.js                  → uma por tela
+│   ├── manifest.json, sw.js     → instalação no celular (PWA) e uso offline das telas
+│   └── .nojekyll
+├── sql/schema.sql               → tabelas, regras e políticas RLS (instalação nova)
+├── sql/migracao_etapa4.sql      → vencimento, parcelas, recorrência
+├── sql/migracao_etapa4b.sql     → tipos "conta com vencimento"
+├── sql/migracao_etapa5.sql      → receitas, tipos de receita e limite mensal
+├── sql/migracao_etapa6.sql      → perfil: endereço e foto
+├── sql/migracao_etapa7.sql      → limite de gastos em porcentagem da renda
 └── .gitignore
 ```
-
-## Como a segurança funciona
-
-- O login é feito pelo **Supabase Auth**; as senhas nunca passam por tabela própria.
-- Os tokens do usuário ficam na **sessão PHP** (servidor). O JavaScript não os recebe.
-- Toda consulta usa o token do usuário e o **RLS** do Supabase garante que cada pessoa só acessa os próprios dados.
-- Requisições que alteram dados exigem o header `X-Requested-With: XMLHttpRequest`.
-- Cartões guardam apenas o nome e os 4 últimos dígitos.
 
 ## Instalar no celular (PWA)
 
 - **Android (Chrome):** botão **Instalar app** no topo, ou menu ⋮ > *Instalar app*.
 - **iPhone (Safari):** Compartilhar > *Adicionar à Tela de Início*.
-- A instalação exige **HTTPS**. Em `localhost` funciona para testes; para usar no celular, publique em uma hospedagem com PHP e HTTPS (o GitHub guarda só o código, não executa PHP).
+- A instalação exige **HTTPS** (o GitHub Pages já usa).
 
 ## Problemas comuns
 
 | Sintoma | O que fazer |
 |---|---|
-| `Extensões do PHP não habilitadas` | No `php.ini`, remova o `;` de `extension=curl` e `extension=mbstring` e reinicie o servidor |
-| Erro de certificado SSL (Windows) | Baixe o `cacert.pem` e informe o caminho em `CURL_CA_BUNDLE` no `.env` |
-| `Configuração do Supabase ausente` | Confira se o arquivo `.env` existe e está preenchido |
-| `permission denied for table ...` | No SQL Editor, rode: `grant select, insert, update, delete on public.tipos_despesa, public.cartoes, public.despesas to authenticated; grant select, update on public.perfis to authenticated;` |
+| "Configuração do Supabase ausente" | Edite `public/js/config.js` com a URL e a chave pública e faça `git push` |
+| Página 404 no endereço do Pages | Confira **Settings → Pages → Source: GitHub Actions** e se o workflow terminou em **Actions** |
+| Mudei algo e o celular mostra a versão antiga | Feche e abra o app duas vezes (ele atualiza sozinho ao detectar arquivos novos) |
+| Cadastro pede confirmação por e-mail e o link abre uma página errada | Ajuste **Site URL** em *Authentication → URL Configuration* (passo 6) |
+| `permission denied for table ...` | No SQL Editor, rode: `grant select, insert, update, delete on public.tipos_despesa, public.cartoes, public.despesas, public.tipos_receita, public.receitas, public.configuracoes to authenticated; grant select, insert, update on public.perfis to authenticated;` |
 
 ## Etapas do MVP
 
@@ -94,3 +100,7 @@ organize/
 - [x] Cartões de crédito
 - [x] App instalável no celular (PWA) e layout responsivo
 - [x] Tela principal de lançamento de despesas (data da compra + vencimento, parcelamento no crédito, despesa que se repete todo mês, tipos "conta com vencimento" para aluguel, água e luz)
+- [x] Receitas, saldo do mês (receitas − despesas), limite mensal de gastos com aviso e Painel com gráficos por mês e por tipo
+- [x] Perfil (nome, endereço e foto redonda no topo) e botão para limpar todos os lançamentos (despesas, receitas e limite)
+- [x] Publicação gratuita no GitHub Pages (sem servidor PHP)
+- [x] Limite de gastos em % da renda do mês (ou em R$), com dica da regra 50/30/20
