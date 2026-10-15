@@ -458,8 +458,7 @@
       }
     }
     atualizarCampos();
-    dlg.showModal();
-    if (!despesa) campoDescricao.focus();
+    Dialogo.abrir(dlg, despesa ? null : campoDescricao);
   }
 
   async function abrirNova() {
