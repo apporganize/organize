@@ -280,8 +280,7 @@
       campoMeses.value = '12';
     }
     atualizarCampos();
-    dlg.showModal();
-    if (!receita) campoDescricao.focus();
+    Dialogo.abrir(dlg, receita ? null : campoDescricao);
   }
 
   async function abrirNova() {
