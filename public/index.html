@@ -101,6 +101,7 @@
             <button type="button" class="btn-texto" id="btn-limite">Definir limite</button>
           </div>
           <p class="limite-valores" id="limite-valores" hidden></p>
+          <p class="limite-origem" id="limite-origem" hidden></p>
           <div class="limite-barra" id="limite-barra" hidden><span id="limite-barra-cheia"></span></div>
           <p class="limite-msg" id="limite-msg" role="status">
             <svg class="limite-icone" viewBox="0 0 24 24" aria-hidden="true">
@@ -325,11 +326,36 @@
   <dialog class="dialogo" id="dlg-limite" aria-labelledby="dlg-limite-titulo">
     <form id="form-limite" novalidate>
       <h2 class="dialogo-titulo" id="dlg-limite-titulo">Limite de gastos</h2>
-      <p class="dialogo-texto">Quanto você quer gastar, no máximo, por mês? O app avisa quando as despesas do mês chegarem perto desse valor ou passarem dele.</p>
-      <div class="campo">
-        <label for="l-valor">Limite mensal (R$)</label>
-        <input class="entrada" id="l-valor" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" required>
+      <p class="dialogo-texto">Defina quanto você pode gastar por mês. O app avisa quando as despesas do mês chegarem perto do limite ou passarem dele.</p>
+
+      <fieldset class="grupo">
+        <legend>Definir o limite em</legend>
+        <div class="segmentos">
+          <label class="segmento"><input type="radio" name="lmodo" value="percentual" checked><span>% da renda</span></label>
+          <label class="segmento"><input type="radio" name="lmodo" value="valor"><span>Valor (R$)</span></label>
+        </div>
+      </fieldset>
+
+      <div class="campo" id="l-campo-percentual">
+        <label for="l-percentual">Porcentagem da renda do mês (%)</label>
+        <input class="entrada" id="l-percentual" type="text" inputmode="numeric" autocomplete="off" maxlength="3" placeholder="80">
       </div>
+      <div class="campo" id="l-campo-valor" hidden>
+        <label for="l-valor">Limite mensal (R$)</label>
+        <input class="entrada" id="l-valor" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00">
+      </div>
+      <p class="limite-previa" id="l-previa" aria-live="polite"></p>
+
+      <div class="limite-dica">
+        <p class="limite-dica-texto"><strong>Dica:</strong> pela regra 50/30/20, gaste até <strong>80%</strong> da renda (50% em necessidades e 30% em desejos) e guarde os outros 20%.</p>
+        <div class="limite-sugestoes" role="group" aria-label="Porcentagens de referência">
+          <button type="button" class="sugestao" data-pct="70">70%</button>
+          <button type="button" class="sugestao" data-pct="80">80%</button>
+          <button type="button" class="sugestao" data-pct="90">90%</button>
+        </div>
+        <p class="limite-dica-nota">70% guarda mais (30%); 90% serve para um orçamento apertado. É uma referência, não uma regra: o melhor limite depende da sua realidade.</p>
+      </div>
+
       <p id="msg-limite" class="msg" role="alert" hidden></p>
       <div class="dialogo-acoes">
         <button type="button" class="btn btn-secundario" data-fechar>Cancelar</button>
