@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="organize!">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <title>Meu perfil - organize!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app">
+
+  <header class="topo">
+    <div class="topo-inner">
+      <p class="marca">organize<span class="marca-ponto">!</span></p>
+
+      <nav class="menu" aria-label="Principal">
+        <a class="menu-item" href="index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          <span>Lançamentos</span>
+        </a>
+        <a class="menu-item" href="painel.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M8 16v-4M13 16V8M18 16v-6"/></svg>
+          <span>Painel</span>
+        </a>
+        <a class="menu-item" href="tipos.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><path d="M7 7h.01"/></svg>
+          <span>Tipos</span>
+        </a>
+        <a class="menu-item" href="cartoes.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+          <span>Cartões</span>
+        </a>
+      </nav>
+
+      <div class="topo-usuario">
+        <a class="avatar" id="avatar" href="perfil.html" data-avatar aria-label="Meu perfil" aria-current="page">
+          <span class="avatar-letra" aria-hidden="true"></span>
+          <img class="avatar-img" alt="" hidden>
+        </a>
+        <span class="topo-nome" id="usuario-nome"></span>
+        <button type="button" class="btn btn-secundario btn-sm" id="btn-instalar" hidden>Instalar<span class="instalar-app"> app</span></button>
+        <button type="button" class="btn btn-secundario btn-sm" id="btn-sair">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="conteudo conteudo--perfil">
+    <div class="coluna">
+      <h1 class="conteudo-titulo">Meu perfil</h1>
+      <p class="conteudo-texto">Seus dados ficam só na sua conta. A foto aparece em um círculo no topo de todas as telas.</p>
+
+      <section class="perfil-cartao" aria-labelledby="t-foto">
+        <h2 class="perfil-titulo" id="t-foto">Foto</h2>
+        <div class="perfil-foto">
+          <div class="avatar avatar--grande" data-avatar role="img" aria-label="Sua foto de perfil">
+            <span class="avatar-letra" aria-hidden="true"></span>
+            <img class="avatar-img" alt="" hidden>
+          </div>
+          <div class="perfil-foto-acoes">
+            <input type="file" id="arquivo-foto" accept="image/*" hidden>
+            <button type="button" class="btn btn-secundario" id="btn-foto">Escolher foto</button>
+            <button type="button" class="btn-texto btn-texto-perigo" id="btn-remover-foto" hidden>Remover foto</button>
+          </div>
+        </div>
+        <p id="msg-foto" class="msg" role="alert" hidden></p>
+      </section>
+
+      <form class="perfil-cartao" id="form-perfil" novalidate>
+        <h2 class="perfil-titulo">Seus dados</h2>
+        <div class="campo">
+          <label for="p-nome">Nome</label>
+          <input class="entrada" id="p-nome" type="text" maxlength="80" autocomplete="name" required>
+        </div>
+        <p class="perfil-email">E-mail da conta: <strong id="p-email">…</strong></p>
+
+        <h2 class="perfil-titulo perfil-titulo--sub">Endereço <span class="perfil-opcional">(opcional)</span></h2>
+        <div class="campo-dupla">
+          <div class="campo">
+            <label for="p-cep">CEP</label>
+            <input class="entrada" id="p-cep" type="text" inputmode="numeric" maxlength="9" autocomplete="postal-code" placeholder="00000-000">
+          </div>
+          <div class="campo">
+            <label for="p-uf">Estado</label>
+            <select class="entrada" id="p-uf" autocomplete="address-level1">
+              <option value="">Escolha</option>
+              <option value="AC">AC</option>
+              <option value="AL">AL</option>
+              <option value="AP">AP</option>
+              <option value="AM">AM</option>
+              <option value="BA">BA</option>
+              <option value="CE">CE</option>
+              <option value="DF">DF</option>
+              <option value="ES">ES</option>
+              <option value="GO">GO</option>
+              <option value="MA">MA</option>
+              <option value="MT">MT</option>
+              <option value="MS">MS</option>
+              <option value="MG">MG</option>
+              <option value="PA">PA</option>
+              <option value="PB">PB</option>
+              <option value="PR">PR</option>
+              <option value="PE">PE</option>
+              <option value="PI">PI</option>
+              <option value="RJ">RJ</option>
+              <option value="RN">RN</option>
+              <option value="RS">RS</option>
+              <option value="RO">RO</option>
+              <option value="RR">RR</option>
+              <option value="SC">SC</option>
+              <option value="SP">SP</option>
+              <option value="SE">SE</option>
+              <option value="TO">TO</option>
+            </select>
+          </div>
+        </div>
+        <div class="campo">
+          <label for="p-rua">Rua</label>
+          <input class="entrada" id="p-rua" type="text" maxlength="120" autocomplete="address-line1">
+        </div>
+        <div class="campo-dupla">
+          <div class="campo">
+            <label for="p-numero">Número</label>
+            <input class="entrada" id="p-numero" type="text" maxlength="20" autocomplete="off">
+          </div>
+          <div class="campo">
+            <label for="p-complemento">Complemento</label>
+            <input class="entrada" id="p-complemento" type="text" maxlength="60" autocomplete="address-line2">
+          </div>
+        </div>
+        <div class="campo-dupla">
+          <div class="campo">
+            <label for="p-bairro">Bairro</label>
+            <input class="entrada" id="p-bairro" type="text" maxlength="60" autocomplete="off">
+          </div>
+          <div class="campo">
+            <label for="p-cidade">Cidade</label>
+            <input class="entrada" id="p-cidade" type="text" maxlength="80" autocomplete="address-level2">
+          </div>
+        </div>
+
+        <p id="msg-perfil" class="msg" role="alert" hidden></p>
+        <button type="submit" class="btn btn-primario" id="btn-salvar-perfil">Salvar</button>
+      </form>
+
+      <section class="perfil-cartao perfil-cartao--perigo" aria-labelledby="t-limpar">
+        <h2 class="perfil-titulo" id="t-limpar">Limpar registros</h2>
+        <p class="perfil-texto">Apaga todas as despesas, todas as receitas e o limite mensal. Seus tipos, cartões, perfil e login continuam. Não dá para desfazer.</p>
+        <p id="msg-limpar" class="msg" role="alert" hidden></p>
+        <button type="button" class="btn btn-perigo" id="btn-limpar">Limpar todos os registros</button>
+      </section>
+    </div>
+  </main>
+
+  <dialog class="dialogo" id="dlg-limpar" aria-labelledby="dlg-limpar-titulo">
+    <form id="form-limpar" novalidate>
+      <h2 class="dialogo-titulo" id="dlg-limpar-titulo">Apagar todos os registros?</h2>
+      <p class="dialogo-texto" id="limpar-texto"></p>
+      <div class="campo">
+        <label for="limpar-confirmacao">Para confirmar, digite <strong>LIMPAR</strong></label>
+        <input class="entrada" id="limpar-confirmacao" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      </div>
+      <p id="msg-dlg-limpar" class="msg" role="alert" hidden></p>
+      <div class="dialogo-acoes">
+        <button type="button" class="btn btn-secundario" data-fechar>Cancelar</button>
+        <button type="submit" class="btn btn-perigo" id="btn-confirmar-limpar" disabled>Apagar tudo</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/backend.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pwa.js"></script>
+  <script src="js/perfil.js"></script>
+</body>
+</html>
