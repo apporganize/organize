@@ -44,17 +44,22 @@
       Resumo.desenhar(r);
     } catch (erro) {
       if (meu !== pedido) return;
+      Resumo.esconderEsqueleto();
       UI.mostrar(msg, erro.message);
     }
   }
 
-  // Vários avisos seguidos (despesas e receitas carregando juntas) viram uma busca só.
+  // Trocar de mês busca na hora. Avisos de "lançamento alterado" podem vir em sequência
+  // (despesa e receita mexendo juntas): esses viram uma busca só.
   function agendar() {
     clearTimeout(agendado);
     agendado = setTimeout(carregar, 120);
   }
 
-  document.addEventListener('mes:mudou', agendar);
+  document.addEventListener('mes:mudou', () => {
+    clearTimeout(agendado);
+    carregar();
+  });
   document.addEventListener('lancamentos:alterados', agendar);
 
   // ---------- limite ----------
@@ -195,5 +200,5 @@
     }
   });
 
-  agendar();
+  carregar();
 })();
