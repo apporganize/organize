@@ -41,6 +41,24 @@ function criarDialogo(titulo, texto) {
 }
 
 const Dialogo = {
+  // Abre uma janela de formulário. Em tela de toque o teclado NÃO abre sozinho (ele cobriria a janela);
+  // o foco vai para o título e o teclado sobe quando a pessoa toca num campo. No computador, foca o campo.
+  abrir(dlg, campo) {
+    const toque = window.matchMedia('(pointer: coarse)').matches;
+    const titulo = dlg.querySelector('.dialogo-titulo');
+    if (toque && titulo) {
+      titulo.setAttribute('tabindex', '-1');
+      titulo.setAttribute('autofocus', '');
+    }
+    dlg.showModal();
+    if (toque) {
+      if (titulo) titulo.focus({ preventScroll: true });
+    } else if (campo) {
+      campo.focus();
+    }
+    Teclado.ajustar();
+  },
+
   // Resolve true se a pessoa confirmou, false se cancelou (ou apertou Esc).
   confirmar({ titulo, texto, rotulo = 'Confirmar', perigo = false }) {
     return new Promise((resolver) => {
@@ -374,3 +392,43 @@ const App = {
     }
   },
 };
+
+/**
+ * Teclado - no iPhone o teclado não encolhe a página: ele cobre a parte de baixo. Como as janelas
+ * (formulários) ficam coladas embaixo da tela, elas acabavam atrás do teclado. Aqui medimos a área
+ * realmente visível (visualViewport) e encaixamos a janela logo acima do teclado, com altura máxima
+ * igual ao que sobrou; o miolo do formulário rola por dentro e os botões continuam à vista.
+ */
+const Teclado = {
+  ajustar() {
+    const vv = window.visualViewport;
+    const celular = window.matchMedia('(max-width: 39.99rem)').matches;
+    document.querySelectorAll('dialog[open]').forEach((d) => {
+      const coberto = vv ? window.innerHeight - vv.height - vv.offsetTop : 0;
+      if (!vv || !celular || coberto < 80) {
+        // sem teclado (ou tela grande): volta ao que o CSS manda
+        d.style.removeProperty('margin-bottom');
+        d.style.removeProperty('max-height');
+        return;
+      }
+      d.style.marginBottom = Math.round(coberto) + 'px';
+      d.style.maxHeight = Math.max(160, Math.round(vv.height - 12)) + 'px';
+    });
+  },
+
+  iniciar() {
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', Teclado.ajustar);
+      window.visualViewport.addEventListener('scroll', Teclado.ajustar);
+    }
+    window.addEventListener('resize', Teclado.ajustar);
+    document.addEventListener('focusin', () => setTimeout(Teclado.ajustar, 50));
+    // um campo tocado fica à vista depois que o teclado terminou de subir
+    document.addEventListener('focusin', (e) => {
+      if (!e.target.closest || !e.target.closest('dialog[open]')) return;
+      if (!/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+      setTimeout(() => e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300);
+    });
+  },
+};
+Teclado.iniciar();
