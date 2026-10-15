@@ -1103,9 +1103,13 @@ const Backend = (function () {
     const [inicio, fim] = intervaloDoMes(ctx);
     const mes = inicio.slice(0, 7);
     try {
-      const listaDespesas = await linhasDoPeriodo('despesas', 'data_vencimento', 'valor,status,data_vencimento', inicio, fim);
-      const listaReceitas = await linhasDoPeriodo('receitas', 'data_recebimento', 'valor,status,data_recebimento', inicio, fim);
-      return ok(montarResumo(mes, listaDespesas, listaReceitas, await lerConfiguracao()));
+      // As três consultas são independentes: saem juntas (1 ida e volta, não 3).
+      const [listaDespesas, listaReceitas, config] = await Promise.all([
+        linhasDoPeriodo('despesas', 'data_vencimento', 'valor,status,data_vencimento', inicio, fim),
+        linhasDoPeriodo('receitas', 'data_recebimento', 'valor,status,data_recebimento', inicio, fim),
+        lerConfiguracao(),
+      ]);
+      return ok(montarResumo(mes, listaDespesas, listaReceitas, config));
     } catch (e) {
       erroSemEtapa5(e);
       throw e;
@@ -1135,11 +1139,14 @@ const Backend = (function () {
     let tiposReceita;
     let limiteMensal;
     try {
-      listaDespesas = await linhasDoPeriodo('despesas', 'data_vencimento', 'valor,status,data_vencimento,tipo_id', inicioDoPeriodo, fimDoMes);
-      listaReceitas = await linhasDoPeriodo('receitas', 'data_recebimento', 'valor,status,data_recebimento,tipo_receita_id', inicioDoPeriodo, fimDoMes);
-      tiposDespesa = await db('GET', 'tipos_despesa', { query: { select: 'id,nome' } });
-      tiposReceita = await db('GET', 'tipos_receita', { query: { select: 'id,nome' } });
-      limiteMensal = await lerConfiguracao();
+      // Consultas independentes: todas saem ao mesmo tempo.
+      [listaDespesas, listaReceitas, tiposDespesa, tiposReceita, limiteMensal] = await Promise.all([
+        linhasDoPeriodo('despesas', 'data_vencimento', 'valor,status,data_vencimento,tipo_id', inicioDoPeriodo, fimDoMes),
+        linhasDoPeriodo('receitas', 'data_recebimento', 'valor,status,data_recebimento,tipo_receita_id', inicioDoPeriodo, fimDoMes),
+        db('GET', 'tipos_despesa', { query: { select: 'id,nome' } }),
+        db('GET', 'tipos_receita', { query: { select: 'id,nome' } }),
+        lerConfiguracao(),
+      ]);
     } catch (e) {
       erroSemEtapa5(e);
       throw e;
