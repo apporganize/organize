@@ -238,6 +238,7 @@
       desenharTudo();
     } catch (erro) {
       if (meu !== pedido) return;
+      Resumo.esconderEsqueleto();
       UI.mostrar(msg, erro.message);
     }
   }
