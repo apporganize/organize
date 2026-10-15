@@ -1725,3 +1725,6 @@ a.avatar[aria-current="page"] { box-shadow: 0 0 0 2px var(--verde); }
   .esq-barra { animation: none; }
 }
 .esqueleto[hidden] { display: none; }
+
+/* o título recebe o foco ao abrir janelas em tela de toque (o teclado não abre sozinho) */
+.dialogo-titulo:focus { outline: none; }
